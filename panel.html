@@ -76,14 +76,8 @@ body.mouse-visible{ cursor:default; }
 .reveal:nth-child(4){ animation-delay:.54s }
 @keyframes entra{ to{ opacity:1; transform:translateY(0); } }
 
-/* ---- Marca: evento + by XNOD ---- */
+/* ---- Marca: el crédito "by XNOD" ---- */
 .by-grande{ display:flex; flex-direction:column; align-items:center; gap:clamp(.35rem,1.1vh,.8rem); }
-.by-grande .evento{
-  font-family:var(--font-display); font-weight:800;
-  font-size:clamp(.68rem,1.45vw,1.65rem); letter-spacing:.18em; text-transform:uppercase;
-  padding-bottom:clamp(.3rem,.85vh,.65rem);
-  border-bottom:2px solid var(--violeta-bright);
-}
 .by-grande .fila{ display:flex; align-items:center; gap:clamp(.5rem,1.3vw,1.1rem); }
 .by-grande .by{
   font-family:var(--font-display); font-weight:500;
@@ -179,7 +173,6 @@ body.mouse-visible .hint{ opacity:1; }
    ⚙️  CONFIGURACIÓN — es lo único que hay que tocar
    =========================================================== */
 const PANEL = {
-  evento: "El espacio de los emprendedores",
   titulo: [
     "Inteligencia artificial,",
     "negocios, emprendedurismo",
@@ -196,7 +189,6 @@ const iniciales = n => n.trim().split(/\s+/).slice(0,2).map(p => p[0] || '').joi
 
 document.getElementById('filmina').innerHTML = `
   <div class="by-grande reveal">
-    <div class="evento">${esc(PANEL.evento)}</div>
     <div class="fila">
       <span class="by">By</span>
       <span class="pastilla"><img src="logo.png" alt="XNOD"></span>
