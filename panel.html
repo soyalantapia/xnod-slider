@@ -132,21 +132,26 @@ h1{
 }
 
 /* ---- "Ambos son fundadores de XNOD" ---- */
+/* Una sola raya arriba, centrada. Las dos que flanqueaban funcionaban
+   con un renglon; con una frase de dos quedaban colgando a los costados. */
 .remate{
-  display:flex; align-items:center; justify-content:center;
-  gap:clamp(.6rem,1.8vw,1.6rem);
-  margin-top:clamp(.2rem,1vh,.8rem);
+  display:flex; flex-direction:column; align-items:center;
+  gap:clamp(.45rem,1.3vh,.95rem);
+  margin-top:clamp(.25rem,1.1vh,.9rem);
+}
+.remate::before{
+  content:''; height:2px; width:clamp(40px,7vw,120px);
+  background:var(--violeta-bright); border-radius:2px;
 }
 .remate span{
   font-family:var(--font-display); font-weight:500;
-  font-size:clamp(.74rem,1.5vw,1.7rem); letter-spacing:.06em;
+  font-size:clamp(.72rem,1.4vw,1.55rem); letter-spacing:.05em; line-height:1.35;
   color:var(--blanco-70); text-transform:uppercase;
+  max-width:52ch; text-align:center;   /* frase larga: preferible dos líneas a una tira */
+  text-wrap:balance;
 }
 .remate span b{ font-weight:800; color:var(--blanco); letter-spacing:.03em; }
-.remate::before, .remate::after{
-  content:''; height:2px; width:clamp(24px,5vw,90px);
-  background:var(--violeta-bright); border-radius:2px; flex:0 0 auto;
-}
+
 
 .hint{
   position:fixed; bottom:clamp(.9rem,2.6vh,2rem); left:clamp(1rem,3.2vw,3.2rem); z-index:50;
@@ -177,7 +182,8 @@ const PANEL = {
     "Inteligencia artificial,",
     "negocios, emprendedurismo",
   ],
-  remate: ["Ambos son fundadores de", "Xnod"],   // la segunda parte va destacada
+  remate: { antes:"Fundadores de", fuerte:"Xnod",
+             despues:", empresa tecnológica enfocada en brindar inteligencia artificial" },
   gente: [
     { nombre:"Alan Tapia",           arroba:"@soyalantapia", foto:"speakers/01-alan-tapia.jpg" },
     { nombre:"Juan Pablo Zaninetti", arroba:"",              foto:"speakers/11-juan-pablo-zaninetti.jpg" },
@@ -209,7 +215,7 @@ document.getElementById('filmina').innerHTML = `
   </div>
 
   <div class="remate reveal">
-    <span>${esc(PANEL.remate[0])} <b>${esc(PANEL.remate[1])}</b></span>
+    <span>${esc(PANEL.remate.antes)} <b>${esc(PANEL.remate.fuerte)}</b>${esc(PANEL.remate.despues)}</span>
   </div>`;
 
 /* Si falta una foto, se muestran las iniciales: nunca se rompe el diseño */
