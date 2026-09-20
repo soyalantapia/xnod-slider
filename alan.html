@@ -329,20 +329,20 @@ addEventListener('mousemove', () => {
     dpr = Math.min(devicePixelRatio||1,2);
     w = cv.width = innerWidth*dpr; h = cv.height = innerHeight*dpr;
     cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
-    const n = Math.round(Math.min(64,(innerWidth*innerHeight)/24000));
+    const n = Math.round(Math.min(96,(innerWidth*innerHeight)/16000));   // más puntos
     puntos = Array.from({length:n}, () => {
       const g = Math.random()<.22;
       return { x:Math.random()*w, y:Math.random()*h,
-        vx:(Math.random()-.5)*.24*dpr, vy:(Math.random()-.5)*.24*dpr,
+        vx:(Math.random()-.5)*.52*dpr, vy:(Math.random()-.5)*.52*dpr,       // más rápido
         r:(g?Math.random()*3.2+3:Math.random()*2+1.4)*dpr,
         violeta:Math.random()<.34, grande:g,
-        fase:Math.random()*Math.PI*2, vel:.6+Math.random()*1.1 };
+        fase:Math.random()*Math.PI*2, vel:.9+Math.random()*1.4 };           // laten más rápido
     });
     viajes = [];
   };
-  const ALC=165, MAXV=8;
+  const ALC=188, MAXV=14;   // más alcance = más líneas; más pulsos viajando
   const nuevo = max => { for(let t=0;t<14;t++){ const a=(Math.random()*puntos.length)|0,b=(Math.random()*puntos.length)|0;
-    if(a===b) continue; if((puntos[a].x-puntos[b].x)**2+(puntos[a].y-puntos[b].y)**2<max) return {a,b,t:0,vel:.0035+Math.random()*.005}; } return null; };
+    if(a===b) continue; if((puntos[a].x-puntos[b].x)**2+(puntos[a].y-puntos[b].y)**2<max) return {a,b,t:0,vel:.005+Math.random()*.007}; } return null; };
 
   const dibujar = ms => {
     const t=ms/1000, max=ALC*ALC*dpr*dpr;

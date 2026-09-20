@@ -859,24 +859,24 @@ class Slider{
     cv.style.width  = innerWidth + 'px';
     cv.style.height = innerHeight + 'px';
 
-    const cantidad = Math.round(Math.min(70, (innerWidth * innerHeight) / 21000));
+    const cantidad = Math.round(Math.min(100, (innerWidth * innerHeight) / 15500));   // más puntos
     puntos = Array.from({length:cantidad}, () => {
       const grande = Math.random() < .22;
       return {
         x: Math.random()*w, y: Math.random()*h,
-        vx:(Math.random()-.5)*.26*dpr, vy:(Math.random()-.5)*.26*dpr,
+        vx:(Math.random()-.5)*.54*dpr, vy:(Math.random()-.5)*.54*dpr,                     // más rápido
         r: (grande ? Math.random()*3.4+3.2 : Math.random()*2.2+1.5) * dpr,
         violeta: Math.random() < .34,
         grande,
         fase: Math.random()*Math.PI*2,                 // cada una late a su tiempo
-        vel:  .6 + Math.random()*1.1
+        vel:  .9 + Math.random()*1.4
       };
     });
     viajes = [];
   };
 
-  const ALCANCE = 165;                                  // hasta dónde se conectan dos puntos
-  const MAX_VIAJES = 9;                                 // pulsos de luz viajando a la vez
+  const ALCANCE = 188;                                  // hasta dónde se conectan dos puntos
+  const MAX_VIAJES = 15;                                // pulsos de luz viajando a la vez
 
   /* Un pulso nace entre dos puntos que ya están conectados y viaja de uno al otro */
   const nuevoViaje = (max) => {
@@ -885,7 +885,7 @@ class Slider{
       const b = (Math.random()*puntos.length)|0;
       if (a === b) continue;
       const d = (puntos[a].x-puntos[b].x)**2 + (puntos[a].y-puntos[b].y)**2;
-      if (d < max) return { a, b, t:0, vel:.0035 + Math.random()*.005 };
+      if (d < max) return { a, b, t:0, vel:.005 + Math.random()*.007 };
     }
     return null;
   };
