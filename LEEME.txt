@@ -1,0 +1,57 @@
+SLIDER DE FONDO — XNOD · EL ESPACIO DE LOS EMPRENDEDORES
+=========================================================
+
+SIN FOTOS. Los 15 disertantes aparecen como lista de nombres en la
+columna de la derecha, en dos columnas. El que está en pantalla se
+pone en blanco y en negrita con una marca violeta al lado.
+
+CÓMO FUNCIONA
+  Dos modos, y el modo depende de dónde estés parado:
+
+  · INICIO (4 pantallas: slogan, título, "De qué se habla acá" y los
+    datos del evento). Giran solas en loop, para siempre. Es lo que
+    se proyecta mientras no habla nadie.
+
+  · DISERTANTE. Scrolleás hasta la persona que va a hablar y la
+    pantalla SE QUEDA AHÍ FIJA. No avanza sola.
+
+EL DÍA DEL EVENTO
+  1. Doble clic en index.html.
+  2. Apretá  F  → pantalla completa.
+  3. Dejalo en el loop de inicio.
+  4. Cuando llaman a alguien: clic en su nombre (derecha) o su número.
+  5. Cuando termina: apretá  Inicio  y vuelve al loop.
+
+CONTROLES
+  scroll          moverse entre pantallas
+  ← → ↑ ↓         lo mismo, con el teclado
+  1 ... 9         ir directo a los primeros 9 disertantes
+  clic en un nombre de la derecha = ir a esa persona (sirve para los 15)
+  Inicio (o Esc)  volver al loop del principio
+  Espacio         pausar / reanudar el loop
+  F               pantalla completa
+
+QUÉ TENÉS QUE COMPLETAR
+  Está todo arriba de todo en index.html, buscá "CONFIGURACIÓN".
+  - SPEAKERS  → ya cargados los 15 de la grilla. Alan Tapia primero,
+                Nicolás Barg segundo, el resto por cronograma. El
+                orden de la lista es el del scroll y el de las teclas,
+                y también el orden en que salen en la columna.
+  - EVENTO    → ⚠️ FALTA LA FECHA. Lugar (Salón Sierras) y horario
+                (09:45 a 17:45) salieron de la grilla.
+  - SEGUNDOS_POR_SLIDE → cuánto dura cada pantalla del loop (hoy: 9).
+
+LOGO
+  Va chico abajo del título, en violeta sobre una pastilla blanca de
+  esquinas redondeadas. Está dibujado en vectores dentro del HTML.
+  Si ponés el archivo original acá al lado con el nombre logo.svg
+  (o logo.png), el slider lo detecta solo y usa ese.
+
+SI APARECEN LAS FOTOS A ÚLTIMO MOMENTO
+  Avisame y las vuelvo a poner: el diseño las soportaba y está a un
+  rato de trabajo volver a enchufarlas.
+
+INTERNET
+  Las tipografías se bajan de internet. Si el lugar no tiene wifi
+  igual funciona: cae a una tipografía de respaldo. Si querés que
+  quede idéntico sin conexión, avisame y las dejo embebidas.

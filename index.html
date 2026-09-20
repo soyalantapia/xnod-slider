@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XNOD — El espacio de los emprendedores</title>
+
+<!-- Tipografías: Cabinet Grotesk (display) + Supreme (texto). Fontshare.
+     Si el venue no tiene internet, caen a la pila de respaldo y sigue viéndose bien. -->
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=supreme@400,500,700&display=swap">
+
+<style>
+/* ===========================================
+   1. TEMA — cambiá acá y cambia todo
+   =========================================== */
+:root{
+  /* Violeta de la marca Xnod + blanco */
+  --violeta:        #4B1FD8;
+  --violeta-bright: #7B4DFF;
+  --violeta-deep:   #1B0552;
+  --violeta-mid:    #2E0C8F;
+  --blanco:         #FFFFFF;
+  --blanco-70:      rgba(255,255,255,.70);
+  --blanco-45:      rgba(255,255,255,.45);
+  --blanco-18:      rgba(255,255,255,.18);
+  --blanco-08:      rgba(255,255,255,.08);
+
+  /* Tipografía */
+  --font-display: 'Cabinet Grotesk','Avenir Next','Helvetica Neue',Arial,sans-serif;
+  --font-body:    'Supreme','Avenir Next','Helvetica Neue',Arial,sans-serif;
+
+  --title-size:    clamp(2rem, 6.2vw, 6.5rem);
+  --h2-size:       clamp(1.25rem, 3.5vw, 2.5rem);
+  --h3-size:       clamp(1rem, 2.5vw, 1.75rem);
+  --body-size:     clamp(.8rem, 1.4vw, 1.65rem);
+  --small-size:    clamp(.62rem, 1vw, 1.15rem);
+
+  --slide-padding: clamp(1rem, 4vw, 4rem);
+  --content-gap:   clamp(.5rem, 2vw, 2rem);
+  --element-gap:   clamp(.25rem, 1vw, 1rem);
+
+  /* Alto reservado para la barra de speakers de abajo */
+
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+/* ===========================================
+   2. VIEWPORT FITTING — base obligatoria
+   =========================================== */
+html, body{ height:100%; overflow-x:hidden; }
+html{ scroll-behavior:smooth; }
+
+.slide{
+  width:100vw; height:100vh; height:100dvh;
+  overflow:hidden;
+  display:flex; flex-direction:column;
+  position:relative;
+}
+.slide-content{
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+  max-height:100%; overflow:hidden;
+  padding:var(--slide-padding);
+}
+.card,.container,.content-box{ max-width:min(90vw,1000px); max-height:min(80vh,700px); }
+.feature-list,.bullet-list{ gap:clamp(.4rem,1vh,1rem); }
+.feature-list li,.bullet-list li{ font-size:var(--body-size); line-height:1.4; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:clamp(.5rem,1.5vw,1rem); }
+img,.image-container{ max-width:100%; max-height:min(50vh,400px); object-fit:contain; }
+
+@media (max-height:700px){
+  :root{ --slide-padding:clamp(.75rem,3vw,2rem); --content-gap:clamp(.4rem,1.5vw,1rem);
+         --title-size:clamp(1.5rem,5vw,3.4rem); --h2-size:clamp(1rem,3vw,1.75rem);
+}
+}
+@media (max-height:600px){
+  :root{ --slide-padding:clamp(.5rem,2.5vw,1.5rem); --content-gap:clamp(.3rem,1vw,.75rem);
+         --title-size:clamp(1.3rem,4.4vw,2.6rem); --body-size:clamp(.72rem,1.2vw,.95rem);
+}
+  .nav-dots,.keyboard-hint,.decorative{ display:none; }
+}
+@media (max-height:500px){
+  :root{ --slide-padding:clamp(.4rem,2vw,1rem); --title-size:clamp(1.1rem,3.8vw,1.9rem);
+         --h2-size:clamp(.9rem,2.5vw,1.25rem); --body-size:clamp(.66rem,1vw,.85rem);
+}
+}
+@media (max-width:600px){
+  :root{ --title-size:clamp(1.4rem,8vw,2.6rem); }
+  .grid{ grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.2s !important; }
+  html{ scroll-behavior:auto; }
+}
+
+/* ===========================================
+   3. BASE
+   =========================================== */
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  font-family:var(--font-body);
+  color:var(--blanco);
+  background:var(--violeta-deep);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  cursor:none;               /* pantalla de evento: sin puntero */
+}
+body.mouse-visible{ cursor:default; }
+
+/* Fondo: malla violeta en capas + viñeta */
+.fondo{
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(120% 90% at 78% 8%,  rgba(123,77,255,.55) 0%, transparent 55%),
+    radial-gradient(100% 80% at 12% 92%, rgba(75,31,216,.65) 0%, transparent 58%),
+    radial-gradient(80% 70% at 50% 45%,  rgba(46,12,143,.75) 0%, transparent 70%),
+    linear-gradient(160deg, #4B1FD8 0%, #33108F 50%, #200767 100%);
+}
+/* Viñeta: oscurece los bordes para que el texto blanco pegue fuerte */
+.fondo::after{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(120% 100% at 50% 50%, transparent 42%, rgba(22,3,70,.62) 100%);
+}
+/* Red de nodos animada (canvas) — guiño al "nod" de Xnod */
+#nodos{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+/* ===========================================
+   4. CHROME FIJO — logo + bajada, arriba a la derecha
+   =========================================== */
+/* Va adentro de .lateral, que es el que está fijo: si éste también fuera
+   fixed, el índice de abajo se le montaría encima. */
+.marca{
+  display:flex; flex-direction:column; align-items:flex-end;
+  gap:clamp(.5rem,1.4vh,1rem);
+  text-align:right;
+}
+/* Pastilla blanca con las esquinas redondeadas; el logo va en violeta,
+   como el original. */
+.marca-logo{
+  color:var(--violeta); background:var(--blanco);
+  border-radius:999px;
+  padding:clamp(.22rem,.5vh,.45rem) clamp(.45rem,1vw,.9rem);
+  display:flex; align-items:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.22);
+}
+.marca-logo svg,
+.marca-logo img{ height:clamp(15px,2.5vh,30px); width:auto; display:block; }
+
+
+/* El evento manda; Xnod queda abajo como crédito */
+.marca-titulo{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.72rem,1.6vw,1.85rem);
+  letter-spacing:.16em; text-transform:uppercase;
+  line-height:1.3; color:var(--blanco);
+  padding-bottom:clamp(.4rem,1vh,.8rem);
+  border-bottom:2px solid var(--violeta-bright);
+}
+.marca-by{
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:clamp(.35rem,.8vw,.7rem);
+  margin-top:clamp(.1rem,.4vh,.35rem);
+}
+.marca-by .by{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.55rem,.9vw,1.05rem);
+  letter-spacing:.22em; text-transform:uppercase; color:var(--blanco-70);
+}
+
+/* ===========================================
+   5. ÁREA ROTATIVA (las "slides" que cambian)
+   =========================================== */
+.escenario{ position:fixed; inset:0; z-index:10; }
+/* Velo sólo del lado del texto: las pelotitas siguen brillando en el resto
+   de la pantalla, pero nunca le ganan a lo que hay que leer. */
+.escenario::before{
+  content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(90deg, rgba(24,4,70,.62) 0%, rgba(24,4,70,.34) 34%, rgba(24,4,70,0) 62%);
+}
+
+.slide{
+  position:absolute; inset:0;
+  height:100%;                                  /* ocupa el escenario, no el viewport entero */
+  opacity:0; visibility:hidden;
+  transition:opacity .9s var(--ease), visibility .9s;
+}
+.slide.activa{ opacity:1; visibility:visible; }
+
+.slide-content{
+  /* deja libre la esquina de la marca */
+  padding-right:clamp(8rem,30vw,30rem);
+  padding-top:clamp(1rem,4vh,3rem);
+  align-items:flex-start;
+  gap:var(--content-gap);
+}
+
+/* Animación de entrada escalonada */
+.reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.slide.activa .reveal{ opacity:1; transform:translateY(0); }
+.slide.activa .reveal:nth-child(1){ transition-delay:.12s }
+.slide.activa .reveal:nth-child(2){ transition-delay:.24s }
+.slide.activa .reveal:nth-child(3){ transition-delay:.36s }
+.slide.activa .reveal:nth-child(4){ transition-delay:.48s }
+.slide.activa .reveal:nth-child(5){ transition-delay:.60s }
+
+/* Etiqueta chica arriba de cada bloque */
+.kicker{
+  display:inline-flex; align-items:center; gap:.7em;
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small-size); letter-spacing:.3em; text-transform:uppercase;
+  color:var(--blanco-70);
+}
+.kicker::before{ content:''; width:clamp(24px,4vw,64px); height:2px; background:var(--violeta-bright); }
+
+/* ===========================================
+   6. SLIDE: SLOGAN
+   =========================================== */
+.slogan{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1.5rem,4.3vw,4.2rem);
+  line-height:1.06; letter-spacing:-.02em;
+  max-width:19ch; text-wrap:balance;
+}
+.slogan em{ font-style:normal; color:var(--violeta-bright); }
+.slogan .sub{ display:block; color:var(--blanco); }
+
+.titulo-xl{
+  font-family:var(--font-display); font-weight:800;
+  font-size:var(--title-size); line-height:.94; letter-spacing:-.03em;
+  text-transform:uppercase; max-width:14ch; text-wrap:balance;
+}
+.texto{
+  font-size:var(--body-size); line-height:1.55; color:var(--blanco-70);
+  max-width:46ch;
+}
+
+/* ===========================================
+   7. SLIDE: LOS TRES EJES
+   =========================================== */
+.ejes{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:clamp(.5rem,1.6vw,1.6rem); width:100%;
+  max-width:min(100%,1200px);
+}
+.eje{
+  border:1px solid var(--blanco-18);
+  background:linear-gradient(150deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+  border-radius:clamp(10px,1.3vw,20px);
+  padding:clamp(.7rem,1.9vw,2.2rem);
+  min-height:clamp(110px,25vh,300px);
+  display:flex; flex-direction:column; gap:clamp(.25rem,.9vh,.7rem);
+  backdrop-filter:blur(6px);
+}
+.eje-nombre{ margin-top:auto; }   /* el número arriba, el nombre y la bajada anclados abajo */
+.eje-num{
+  font-family:var(--font-display); font-weight:800;
+  font-size:var(--small-size); letter-spacing:.2em; color:var(--violeta-bright);
+}
+.eje-nombre{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.95rem,2.4vw,3.1rem); line-height:1;
+  text-transform:uppercase; letter-spacing:-.015em;
+}
+.eje-desc{ font-size:clamp(.66rem,1.05vw,1.32rem); line-height:1.45; color:var(--blanco-70); }
+@media (max-width:760px){ .ejes{ grid-template-columns:1fr; } .eje-desc{ display:none; } }
+
+/* ===========================================
+   8. SLIDE: FICHA DE DISERTANTE (spotlight)
+   =========================================== */
+.ficha{ display:flex; align-items:center; width:100%; }
+.ficha-texto{ min-width:0; display:flex; flex-direction:column; gap:clamp(.25rem,1vh,.8rem); }
+.ficha-nombre{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1.5rem,5.6vw,6rem); line-height:.97; letter-spacing:-.035em;
+  text-transform:uppercase; text-wrap:balance;
+}
+.ficha-rol{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(.82rem,1.85vw,2.1rem); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--violeta-bright);
+}
+.ficha-hora{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.78rem,1.65vw,1.85rem); letter-spacing:.04em;
+  color:var(--blanco); align-self:flex-start;
+  padding:.2em .7em; border-radius:999px;
+  background:rgba(255,255,255,.14); border:1px solid var(--blanco-18);
+}
+.ficha-tema{ font-size:clamp(.82rem,1.6vw,1.9rem); line-height:1.45; color:var(--blanco-70); max-width:30ch; }
+
+/* ===========================================
+   9. SLIDE: DATOS DEL EVENTO
+   =========================================== */
+.datos{ display:flex; flex-wrap:wrap; gap:clamp(1rem,3.4vw,3.6rem); }
+.dato-label{
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small-size); letter-spacing:.24em; text-transform:uppercase; color:var(--blanco-45);
+  margin-bottom:.35em;
+}
+.dato-valor{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1rem,2.6vw,3.2rem); line-height:1.05; letter-spacing:-.02em;
+}
+
+/* ===========================================
+   10. ÍNDICE DE DISERTANTES (columna derecha)
+   Sin fotos: no llegamos a tenerlas. Sólo los nombres, en dos columnas.
+   =========================================== */
+.lateral{
+  position:fixed; z-index:40;
+  top:clamp(1rem,3.2vh,2.6rem);
+  right:clamp(1rem,3.4vw,3.4rem);
+  display:flex; flex-direction:column; align-items:flex-end;
+  gap:clamp(1rem,3.4vh,2.6rem);
+  text-align:right; max-width:42vw;
+}
+.indice-titulo{
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small-size); letter-spacing:.3em; text-transform:uppercase;
+  color:var(--blanco-45);
+  padding-bottom:clamp(.3rem,.8vh,.6rem);
+  margin-bottom:clamp(.35rem,1vh,.75rem);
+  border-bottom:1px solid var(--blanco-18);
+}
+/* Dos columnas, y se llenan de arriba hacia abajo (no en zigzag) */
+.indice-lista{
+  list-style:none;
+  display:grid;
+  grid-auto-flow:column;
+  grid-template-rows:repeat(var(--filas,8), auto);
+  gap:clamp(.15rem,.55vh,.42rem) clamp(.9rem,2.2vw,2.2rem);
+}
+.indice-item{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.62rem,1.2vw,1.42rem);
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--blanco-70); white-space:nowrap;
+  cursor:pointer;
+  transition:color .35s var(--ease), transform .35s var(--ease);
+}
+/* El que está en pantalla: blanco, en negrita y con una marca violeta */
+.indice-item.on{
+  color:var(--blanco); font-weight:800;
+  transform:translateX(calc(-1 * clamp(.2rem,.5vw,.5rem)));
+}
+.indice-item.on::after{
+  content:''; display:inline-block; vertical-align:middle;
+  width:clamp(14px,1.6vw,26px); height:2px;
+  margin-left:.5em; background:var(--violeta-bright);
+}
+
+/* ===========================================
+   11. PROGRESO + AYUDA
+   =========================================== */
+body.parado .progreso{ opacity:0; }   /* parado en un disertante: no hay nada avanzando */
+.progreso{
+  position:fixed; top:0; left:0; z-index:50;
+  transition:opacity .4s;
+  height:3px; width:0%;
+  background:linear-gradient(90deg,var(--violeta-bright),var(--blanco));
+  box-shadow:0 0 14px rgba(123,77,255,.8);
+}
+.pausa{
+  position:fixed; bottom:clamp(1rem,3vh,2.4rem); left:clamp(1rem,3vw,3rem); z-index:50;
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small-size); letter-spacing:.24em; text-transform:uppercase;
+  color:var(--blanco-45);
+  opacity:0; transition:opacity .4s;
+}
+.pausa.on{ opacity:1; }
+.keyboard-hint{
+  position:fixed; bottom:clamp(1rem,3vh,2.4rem); right:clamp(1rem,3vw,3rem); z-index:50;
+  font-size:var(--small-size); letter-spacing:.1em; color:var(--blanco-45);
+  opacity:0; transition:opacity .4s;
+}
+body.mouse-visible .keyboard-hint{ opacity:1; }
+</style>
+</head>
+
+<body>
+
+<!-- ============ FONDO ============ -->
+<div class="fondo"></div>
+<canvas id="nodos"></canvas>
+
+<!-- ============ PROGRESO ============ -->
+<div class="progreso" id="progreso"></div>
+
+<!-- ============ COLUMNA DERECHA: marca + índice de disertantes ============ -->
+<div class="lateral">
+ <div class="marca">
+  <div class="marca-titulo">El espacio de los<br>emprendedores</div>
+  <div class="marca-by">
+    <span class="by">By</span>
+    <div class="marca-logo" id="marcaLogo">
+    <!-- Reconstrucción vectorial del logo Xnod en blanco (versión negativa).
+         Si ponés un archivo `logo.png` o `logo.svg` en esta misma carpeta,
+         el script de abajo lo usa automáticamente en lugar de este SVG. -->
+    <svg viewBox="0 0 1070 330" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="XNOD">
+      <!-- Anillo: dos arcos de 148°, cortados arriba a la derecha y abajo a la
+           izquierda, justo por donde pasa la conexión entre los dos nodos. -->
+      <g stroke="currentColor" stroke-width="34" stroke-linecap="butt">
+        <path d="M268.2 107.8 A118 118 0 0 1 107.8 268.2"/>
+        <path d="M61.8 222.2 A118 118 0 0 1 222.2 61.8"/>
+      </g>
+      <!-- Conexión: una línea fina de nodo a nodo, pasando por el centro -->
+      <path d="M36 294 L294 36" stroke="currentColor" stroke-width="5" opacity=".8"/>
+      <!-- X interior contorneada, inscripta en el anillo -->
+      <path d="M93 93 L126 93 L165 144 L204 93 L237 93 L182.5 165 L237 237 L204 237 L165 186 L126 237 L93 237 L147.5 165 Z"
+            stroke="currentColor" stroke-width="6.5" stroke-linejoin="round"/>
+      <!-- Nodos -->
+      <circle cx="294" cy="36"  r="26" fill="currentColor"/>
+      <circle cx="36"  cy="294" r="26" fill="currentColor"/>
+      <!-- N O D contorneadas -->
+      <g stroke="currentColor" stroke-width="9" stroke-linejoin="round">
+        <path d="M380 265 L380 65 L424 65 L526 213 L526 65 L570 65 L570 265 L526 265 L424 117 L424 265 Z"/>
+        <rect x="614" y="65"  width="232" height="200" rx="100"/>
+        <rect x="658" y="109" width="144" height="112" rx="56"/>
+        <path d="M890 65 L950 65 A100 100 0 0 1 950 265 L890 265 Z"/>
+        <path d="M934 109 L950 109 A56 56 0 0 1 950 221 L934 221 Z"/>
+      </g>
+    </svg>
+    </div>
+  </div>
+ </div>
+
+ <!-- Índice de disertantes: se arma solo desde la lista SPEAKERS -->
+ <aside class="indice" id="indice">
+   <div class="indice-titulo">Disertantes</div>
+   <ul class="indice-lista" id="indiceLista"></ul>
+ </aside>
+</div>
+
+<!-- ============ ESCENARIO ROTATIVO ============ -->
+<main class="escenario" id="escenario"><!-- las slides las arma el JS --></main>
+
+<div class="pausa" id="pausa">⏸ Pausado</div>
+<div class="keyboard-hint">Scroll o ← → para moverte · clic en un nombre para ir a esa persona · Inicio vuelve al loop · F pantalla completa</div>
+
+<script>
+/* ===========================================================
+   ⚙️  CONFIGURACIÓN — ESTO ES LO ÚNICO QUE TENÉS QUE TOCAR
+   =========================================================== */
+
+/* --- Datos del evento ---------------------------------------
+   Dejá en "" lo que no quieras mostrar. Si fecha y lugar están
+   vacíos, la slide de datos no aparece (nunca se proyecta un
+   dato falso o a medio llenar).                                */
+const EVENTO = {
+  fecha: "",                 // ← COMPLETAR. ej: "Jueves 9 de octubre"
+  hora:  "09:45 a 17:45",
+  lugar: "Salón Sierras",
+};
+
+/* --- Disertantes ------------------------------------------------
+   Sacados de la grilla del evento. El ORDEN de esta lista es el orden
+   en que scrolleás y también el número de tecla (1 = el primero).
+   Alan Tapia va primero y Nicolás Barg segundo, como se pidió; el
+   resto sigue el orden del cronograma.
+
+   Sin fotos: se muestran sólo los nombres, en la columna de la derecha. */
+const SPEAKERS = [
+  { nombre:"Alan Tapia",           rol:"Xnod",                        tema:"Inteligencia Artificial",                        hora:"17:25" },
+  { nombre:"Nicolás Barg",         rol:"CEO · Scher",                 tema:"Ventas que enamoran",                            hora:"10:15" },
+  { nombre:"Melisa Corrales",      rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10" },
+  { nombre:"Catalina Rapetti",     rol:"Panel",                       tema:"Lo que no cotiza en bolsa · Tu magnificencia",    hora:"11:10" },
+  { nombre:"Javier Buteler",       rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10" },
+  { nombre:"Matías Ioma",          rol:"Puni",                        tema:"",                                               hora:"12:05" },
+  { nombre:"Karina Lopuzzo",       rol:"Conducción",                  tema:"Aprendé a vender felicidad",                     hora:"13:30" },
+  { nombre:"Elizette Duarte",      rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
+  { nombre:"Sabrina Gianfelice",   rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
+  { nombre:"Estefanía Zelazek",    rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
+  { nombre:"Juan Pablo Zaninetti", rol:"Xnod",                        tema:"",                                               hora:"14:45" },
+  { nombre:"Iñaki Apezteguía",     rol:"",                            tema:"Cripto & Tecnología",                            hora:"15:25" },
+  { nombre:"Nayla Tapia",          rol:"",                            tema:"Cómo tener creadores de contenido para tu marca", hora:"16:05" },
+  { nombre:"Analía Lombardero",    rol:"",                            tema:"",                                               hora:"16:20" },
+  { nombre:"Emilio Marziale",      rol:"Gerente General · Conte Más", tema:"",                                               hora:"16:50" },
+];
+
+/* --- Ritmo del loop ------------------------------------------ */
+const SEGUNDOS_POR_SLIDE = 9;
+
+/* ===========================================================
+   LOGO: si existe logo.png / logo.svg al lado del HTML, se usa ese
+   =========================================================== */
+(function cargarLogoReal(){
+  const contenedor = document.getElementById('marcaLogo');
+  const candidatos = ['logo.svg','logo.png'];
+  let i = 0;
+  const probar = () => {
+    if (i >= candidatos.length) return;            // se queda el SVG reconstruido
+    const img = new Image();
+    img.onload  = () => { contenedor.innerHTML = ''; img.className = 'marca-logo'; contenedor.appendChild(img); };
+    img.onerror = () => { i++; probar(); };
+    img.src = candidatos[i];
+  };
+  probar();
+})();
+
+/* ===========================================================
+   UTILIDADES
+   =========================================================== */
+const iniciales = n => n.trim().split(/\s+/).slice(0,2).map(p=>p[0]||'').join('').toUpperCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ===========================================================
+   ÍNDICE DE DISERTANTES (columna derecha)
+   =========================================================== */
+(function construirIndice(){
+  const caja  = document.getElementById('indice');
+  const lista = document.getElementById('indiceLista');
+
+  if (!SPEAKERS.length){ caja.style.display = 'none'; return; }
+
+  // Dos columnas: la primera se lleva la mitad de arriba (redondeando para arriba)
+  lista.style.setProperty('--filas', Math.ceil(SPEAKERS.length / 2));
+
+  lista.innerHTML = SPEAKERS.map((sp,i) =>
+    `<li class="indice-item" data-sp="${i}">${esc(sp.nombre)}</li>`
+  ).join('');
+})();
+
+/* ===========================================================
+   SLIDES — se arman acá. Agregar/sacar es agregar/sacar objetos.
+   =========================================================== */
+const SLIDES = [];
+
+/* 1. SLOGAN — el mensaje principal */
+SLIDES.push({ html:`
+  <div class="slide-content">
+    <div class="kicker reveal">Xnod presenta</div>
+    <h1 class="slogan reveal">
+      Un espacio donde los empresarios y emprendedores se juntan en un mismo lugar
+      <span class="sub">para hablar de <em>negocios</em>, <em>finanzas</em> y <em>tecnología</em>.</span>
+    </h1>
+  </div>`});
+
+/* 2. EL TÍTULO GRANDE */
+SLIDES.push({ html:`
+  <div class="slide-content">
+    <div class="kicker reveal">Bienvenidos</div>
+    <h1 class="titulo-xl reveal">El espacio de los emprendedores</h1>
+    <p class="texto reveal">Una noche para cruzar ideas, contactos y negocios con la gente que está construyendo lo que viene.</p>
+  </div>`});
+
+/* 3. LOS TRES EJES */
+SLIDES.push({ html:`
+  <div class="slide-content">
+    <div class="kicker reveal">De qué se habla acá</div>
+    <div class="ejes reveal">
+      <div class="eje">
+        <div class="eje-num">01</div>
+        <div class="eje-nombre">Negocios</div>
+        <div class="eje-desc">Cómo se arma, se vende y se hace crecer una empresa de verdad.</div>
+      </div>
+      <div class="eje">
+        <div class="eje-num">02</div>
+        <div class="eje-nombre">Finanzas</div>
+        <div class="eje-desc">Números, capital e inversión: la parte que sostiene todo lo demás.</div>
+      </div>
+      <div class="eje">
+        <div class="eje-num">03</div>
+        <div class="eje-nombre">Tecnología</div>
+        <div class="eje-desc">Las herramientas que hoy cambian la escala de lo que podés hacer.</div>
+      </div>
+    </div>
+  </div>`});
+
+/* 4. DATOS DEL EVENTO — sólo si los cargaste. Cierra el bloque de ambiente. */
+if (EVENTO.fecha || EVENTO.lugar || EVENTO.hora){
+  const dato = (l,v) => v ? `<div><div class="dato-label">${esc(l)}</div><div class="dato-valor">${esc(v)}</div></div>` : '';
+  SLIDES.push({ html:`
+    <div class="slide-content">
+      <div class="kicker reveal">El encuentro</div>
+      <h1 class="titulo-xl reveal">El espacio de los emprendedores</h1>
+      <div class="datos reveal">
+        ${dato('Fecha',EVENTO.fecha)}${dato('Hora',EVENTO.hora)}${dato('Lugar',EVENTO.lugar)}
+      </div>
+    </div>`});
+}
+
+/* 5. UNA FICHA POR DISERTANTE — de acá en adelante el slider NO avanza solo */
+const FIN_AMBIENTE = SLIDES.length - 1;   // hasta acá gira solo; de acá en adelante, a mano
+
+SPEAKERS.forEach((sp,i) => SLIDES.push({
+  speaker:i,
+  html:`
+  <div class="slide-content">
+    <div class="kicker reveal">Disertante</div>
+    <div class="ficha reveal">
+      <div class="ficha-texto">
+        <div class="ficha-nombre">${esc(sp.nombre)}</div>
+        ${sp.rol  ? `<div class="ficha-rol">${esc(sp.rol)}</div>`   : ''}
+        ${sp.hora ? `<div class="ficha-hora">${esc(sp.hora)} h</div>` : ''}
+        ${sp.tema ? `<div class="ficha-tema">${esc(sp.tema)}</div>` : ''}
+      </div>
+    </div>
+  </div>`
+}));
+
+/* ===========================================================
+   CONTROLADOR
+
+   Dos modos, y el modo lo decide en qué slide estás parado:
+
+   · AMBIENTE (slides 0 .. FIN_AMBIENTE): slogan, título, de qué se
+     habla acá y los datos del evento. Giran solas en loop, para
+     siempre. Es lo que se proyecta mientras no habla nadie.
+
+   · DISERTANTE (de FIN_AMBIENTE+1 en adelante): scrolleás hasta la
+     persona que va a hablar y la pantalla SE QUEDA AHÍ. No avanza
+     sola: se mueve sólo si vos la movés.
+
+   Para volver al loop: Inicio, Esc, o seguí scrolleando hasta el final.
+   =========================================================== */
+class Slider{
+  constructor(){
+    this.escenario = document.getElementById('escenario');
+    this.progreso  = document.getElementById('progreso');
+    this.pausaMsg  = document.getElementById('pausa');
+    this.items     = [...document.querySelectorAll('.indice-item')];
+    this.i = 0; this.pausado = false; this.t0 = 0;
+
+    this.escenario.innerHTML = SLIDES.map(s => `<section class="slide">${s.html}</section>`).join('');
+    this.slides = [...this.escenario.querySelectorAll('.slide')];
+
+    this.mostrar(0);
+    this.tick();
+    this.teclado();
+    this.rueda();
+    this.tactil();
+    this.mouse();
+    this.clicEnIndice();
+    this.volverDeSegundoPlano();
+  }
+
+  /* Si la ventana queda tapada, el navegador congela la animación. Al volver
+     al frente arrancamos el conteo de cero, para que no salte media docena
+     de pantallas de golpe delante de la gente. */
+  volverDeSegundoPlano(){
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this.t0 = performance.now();
+    });
+  }
+
+  /* ¿Estoy en el bloque que gira solo? */
+  get enAmbiente(){ return this.i <= FIN_AMBIENTE; }
+
+  mostrar(n){
+    this.i = (n + this.slides.length) % this.slides.length;
+    this.slides.forEach((s,k) => s.classList.toggle('activa', k === this.i));
+
+    // Resalta en la columna de la derecha al disertante que está en pantalla
+    const sp = SLIDES[this.i].speaker;
+    this.items.forEach((it,k) => it.classList.toggle('on', k === sp));
+
+    // La barra de progreso sólo tiene sentido cuando algo avanza solo
+    document.body.classList.toggle('parado', !this.enAmbiente);
+    if (!this.enAmbiente) this.progreso.style.width = '0%';
+
+    this.t0 = performance.now();
+  }
+
+  siguiente(){ this.mostrar(this.i + 1); }
+  anterior(){  this.mostrar(this.i - 1); }
+  alInicio(){  this.mostrar(0); }
+
+  /* Reloj por requestAnimationFrame: progreso y avance van juntos, y si
+     la pestaña se duerme no se acumulan saltos. */
+  tick(){
+    const paso = (t) => {
+      if (this.enAmbiente && !this.pausado){
+        const avance = (t - this.t0) / (SEGUNDOS_POR_SLIDE * 1000);
+        this.progreso.style.width = Math.min(avance,1) * 100 + '%';
+        // El loop de ambiente vuelve al principio, no se mete con los disertantes
+        if (avance >= 1) this.mostrar(this.i + 1 > FIN_AMBIENTE ? 0 : this.i + 1);
+      }
+      requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  }
+
+  togglePausa(){
+    this.pausado = !this.pausado;
+    this.pausaMsg.classList.toggle('on', this.pausado);
+    if (!this.pausado) this.t0 = performance.now();
+  }
+
+  teclado(){
+    addEventListener('keydown', e => {
+      const k = e.key;
+      if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown'){ e.preventDefault(); this.siguiente(); }
+      else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp'){ e.preventDefault(); this.anterior(); }
+      else if (k === 'Home' || k === 'Escape'){ this.alInicio(); }
+      else if (k === ' '){ e.preventDefault(); this.togglePausa(); }
+      else if (k === 'f' || k === 'F'){
+        document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+      }
+      // Number keys: saltar directo a un disertante (1 = el primero)
+      else if (/^[1-9]$/.test(k)){
+        const destino = FIN_AMBIENTE + Number(k);
+        if (destino < this.slides.length) this.mostrar(destino);
+      }
+    });
+  }
+
+  /* Scroll del mouse o del trackpad. Con freno, si no un solo gesto
+     del trackpad te pasa cinco disertantes de largo. */
+  rueda(){
+    let libre = true;
+    addEventListener('wheel', e => {
+      e.preventDefault();
+      if (!libre || Math.abs(e.deltaY) < 4) return;
+      libre = false;
+      e.deltaY > 0 ? this.siguiente() : this.anterior();
+      setTimeout(() => libre = true, 700);
+    }, { passive:false });
+  }
+
+  /* Deslizar con el dedo, por si lo manejás desde una tablet */
+  tactil(){
+    let y0 = null, x0 = null;
+    addEventListener('touchstart', e => { y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; }, {passive:true});
+    addEventListener('touchend', e => {
+      if (y0 === null) return;
+      const dy = e.changedTouches[0].clientY - y0;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.max(Math.abs(dy), Math.abs(dx)) > 45){
+        (Math.abs(dy) > Math.abs(dx) ? dy < 0 : dx < 0) ? this.siguiente() : this.anterior();
+      }
+      y0 = x0 = null;
+    }, {passive:true});
+  }
+
+  /* Clic en un nombre de la derecha = saltar a esa persona. Es la forma
+     más rápida de ponerla cuando la llaman al escenario. */
+  clicEnIndice(){
+    this.items.forEach((it,k) => {
+      it.addEventListener('click', e => { e.stopPropagation(); this.mostrar(FIN_AMBIENTE + 1 + k); });
+    });
+  }
+
+  /* El puntero se esconde solo a los 2s: es una pantalla de evento */
+  mouse(){
+    let timer;
+    addEventListener('mousemove', () => {
+      document.body.classList.add('mouse-visible');
+      clearTimeout(timer);
+      timer = setTimeout(() => document.body.classList.remove('mouse-visible'), 2000);
+    });
+    addEventListener('click', () => this.siguiente());
+  }
+}
+
+/* ===========================================================
+   FONDO: RED DE NODOS
+   Puntos que flotan y se conectan cuando se acercan.
+   =========================================================== */
+(function redDeNodos(){
+  const cv  = document.getElementById('nodos');
+  const ctx = cv.getContext('2d');
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, dpr, puntos, viajes;
+
+  /* Halo pre-dibujado una sola vez. Pintar un sprite es MUCHO más barato que
+     usar shadowBlur en cada cuadro: esto tiene que correr horas sin calentar. */
+  const hacerHalo = (r,g,b) => {
+    const c = document.createElement('canvas'); const R = 64;
+    c.width = c.height = R*2;
+    const cx = c.getContext('2d');
+    const grad = cx.createRadialGradient(R,R,0,R,R,R);
+    grad.addColorStop(0,   `rgba(${r},${g},${b},1)`);
+    grad.addColorStop(.12, `rgba(${r},${g},${b},.75)`);
+    grad.addColorStop(.32, `rgba(${r},${g},${b},.24)`);
+    grad.addColorStop(.62, `rgba(${r},${g},${b},.06)`);
+    grad.addColorStop(1,   `rgba(${r},${g},${b},0)`);
+    cx.fillStyle = grad; cx.fillRect(0,0,R*2,R*2);
+    return c;
+  };
+  const haloBlanco  = hacerHalo(255,255,255);
+  const haloVioleta = hacerHalo(170,140,255);
+
+  const medir = () => {
+    dpr = Math.min(devicePixelRatio || 1, 2);          // tope de DPR: corre horas sin calentar
+    w = cv.width  = innerWidth  * dpr;
+    h = cv.height = innerHeight * dpr;
+    cv.style.width  = innerWidth + 'px';
+    cv.style.height = innerHeight + 'px';
+
+    const cantidad = Math.round(Math.min(70, (innerWidth * innerHeight) / 21000));
+    puntos = Array.from({length:cantidad}, () => {
+      const grande = Math.random() < .22;
+      return {
+        x: Math.random()*w, y: Math.random()*h,
+        vx:(Math.random()-.5)*.26*dpr, vy:(Math.random()-.5)*.26*dpr,
+        r: (grande ? Math.random()*3.4+3.2 : Math.random()*2.2+1.5) * dpr,
+        violeta: Math.random() < .34,
+        grande,
+        fase: Math.random()*Math.PI*2,                 // cada una late a su tiempo
+        vel:  .6 + Math.random()*1.1
+      };
+    });
+    viajes = [];
+  };
+
+  const ALCANCE = 165;                                  // hasta dónde se conectan dos puntos
+  const MAX_VIAJES = 9;                                 // pulsos de luz viajando a la vez
+
+  /* Un pulso nace entre dos puntos que ya están conectados y viaja de uno al otro */
+  const nuevoViaje = (max) => {
+    for (let intento = 0; intento < 14; intento++){
+      const a = (Math.random()*puntos.length)|0;
+      const b = (Math.random()*puntos.length)|0;
+      if (a === b) continue;
+      const d = (puntos[a].x-puntos[b].x)**2 + (puntos[a].y-puntos[b].y)**2;
+      if (d < max) return { a, b, t:0, vel:.0035 + Math.random()*.005 };
+    }
+    return null;
+  };
+
+  const dibujar = (ms) => {
+    const t = ms / 1000;
+    const max = ALCANCE * ALCANCE * dpr * dpr;
+    ctx.clearRect(0,0,w,h);
+
+    // --- 1. Las conexiones (debajo de todo) ---
+    ctx.globalCompositeOperation = 'source-over';
+    for (let i=0;i<puntos.length;i++){
+      const p = puntos[i];
+      if (!quieto){
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+      }
+      for (let j=i+1;j<puntos.length;j++){
+        const q = puntos[j];
+        const d = (p.x-q.x)**2 + (p.y-q.y)**2;
+        if (d < max){
+          const cerca = 1 - d/max;
+          ctx.strokeStyle = (p.violeta && q.violeta)
+            ? `rgba(180,150,255,${cerca*.42})`
+            : `rgba(255,255,255,${cerca*.30})`;
+          ctx.lineWidth = dpr * (.7 + cerca*.9);
+          ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+        }
+      }
+    }
+
+    // --- 2. Los pulsos que recorren las conexiones ---
+    if (!quieto){
+      while (viajes.length < MAX_VIAJES){
+        const v = nuevoViaje(max);
+        if (!v) break;
+        viajes.push(v);
+      }
+      ctx.globalCompositeOperation = 'lighter';
+      for (let k = viajes.length - 1; k >= 0; k--){
+        const v = viajes[k];
+        v.t += v.vel;
+        const a = puntos[v.a], b = puntos[v.b];
+        const d = (a.x-b.x)**2 + (a.y-b.y)**2;
+        if (v.t >= 1 || d > max){ viajes.splice(k,1); continue; }   // llegó, o se alejaron
+        const x = a.x + (b.x-a.x)*v.t;
+        const y = a.y + (b.y-a.y)*v.t;
+        const fade = Math.sin(v.t * Math.PI);                       // entra y sale suave
+        const rad = 13 * dpr * fade;
+        ctx.globalAlpha = fade * .9;
+        ctx.drawImage(haloBlanco, x-rad, y-rad, rad*2, rad*2);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // --- 3. Las pelotitas, latiendo ---
+    ctx.globalCompositeOperation = 'lighter';
+    for (const p of puntos){
+      const late  = quieto ? 1 : 1 + Math.sin(t*p.vel + p.fase) * .38;
+      const halo  = p.r * (p.grande ? 7.5 : 5.4) * late;
+      const halim = p.violeta ? haloVioleta : haloBlanco;
+
+      ctx.globalAlpha = (p.grande ? .85 : .62) * (quieto ? 1 : .72 + Math.sin(t*p.vel + p.fase)*.28);
+      ctx.drawImage(halim, p.x-halo, p.y-halo, halo*2, halo*2);
+
+      // núcleo sólido: es lo que hace que se lea como "pelotita" y no como mancha
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = p.violeta ? 'rgba(215,200,255,.95)' : 'rgba(255,255,255,.95)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * late * .55, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    requestAnimationFrame(dibujar);
+  };
+
+  medir();
+  addEventListener('resize', medir);
+  requestAnimationFrame(dibujar);
+})();
+
+new Slider();
+</script>
+</body>
+</html>
