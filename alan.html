@@ -49,7 +49,11 @@ body.mouse-visible{ cursor:default; }
   width:clamp(380px,64vw,1120px); opacity:.13;
   animation:respira 14s ease-in-out infinite;
 }
-.marca-fondo svg{ width:100%; height:auto; display:block; }
+.marca-fondo svg,
+.marca-fondo img{ width:100%; height:auto; display:block; }
+/* El archivo real es oscuro sobre transparente: esto lo vuelve una
+   silueta blanca, que es lo que necesita el fondo violeta. */
+.marca-fondo img{ filter:brightness(0) invert(1); }
 @keyframes respira{ 0%,100%{opacity:.115} 50%{opacity:.175} }
 
 /* Velo del lado del texto, para que nada le gane a lo que hay que leer */
@@ -96,7 +100,8 @@ body.mouse-visible{ cursor:default; }
   display:flex; align-items:center;
   box-shadow:0 10px 36px rgba(0,0,0,.3);
 }
-.by-grande .pastilla svg{ height:clamp(26px,5vh,64px); width:auto; display:block; }
+.by-grande .pastilla svg,
+.by-grande .pastilla img{ height:clamp(26px,5vh,64px); width:auto; display:block; }
 
 /* ---- Título y subtítulo ---- */
 h1{
@@ -203,12 +208,7 @@ body.mouse-visible .hint{ opacity:1; }
 <canvas id="nodos"></canvas>
 
 <div class="marca-fondo" aria-hidden="true">
-  <svg viewBox="0 0 330 330" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g stroke="#FFF" stroke-width="34"><path d="M268.2 107.8 A118 118 0 0 1 107.8 268.2"/><path d="M61.8 222.2 A118 118 0 0 1 222.2 61.8"/></g>
-    <path d="M36 294 L294 36" stroke="#FFF" stroke-width="5" opacity=".8"/>
-    <path d="M93 93 L126 93 L165 144 L204 93 L237 93 L182.5 165 L237 237 L204 237 L165 186 L126 237 L93 237 L147.5 165 Z" stroke="#FFF" stroke-width="6.5" stroke-linejoin="round"/>
-    <circle cx="294" cy="36" r="26" fill="#FFF"/><circle cx="36" cy="294" r="26" fill="#FFF"/>
-  </svg>
+  <img src="logo-marca.png" alt="">
 </div>
 
 <main class="filmina" id="filmina"></main>
@@ -296,7 +296,7 @@ document.getElementById('foto').innerHTML = `<img src="${esc(CHARLA.foto)}" alt=
   const probar = () => {
     if (i >= candidatos.length) return;
     const img = new Image();
-    img.onload  = () => { pastilla.innerHTML = ''; img.style.height = 'clamp(26px,5vh,64px)'; img.style.width = 'auto'; pastilla.appendChild(img); };
+    img.onload  = () => { pastilla.innerHTML = ''; img.alt = 'XNOD'; pastilla.appendChild(img); };
     img.onerror = () => { i++; probar(); };
     img.src = candidatos[i];
   };

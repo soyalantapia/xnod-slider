@@ -42,10 +42,15 @@ QUÉ TENÉS QUE COMPLETAR
   - SEGUNDOS_POR_SLIDE → cuánto dura cada pantalla del loop (hoy: 9).
 
 LOGO
-  Va chico abajo del título, en violeta sobre una pastilla blanca de
-  esquinas redondeadas. Está dibujado en vectores dentro del HTML.
-  Si ponés el archivo original acá al lado con el nombre logo.svg
-  (o logo.png), el slider lo detecta solo y usa ese.
+  Ya está el ARCHIVO ORIGINAL, no el dibujado:
+    logo.png        el logo completo (XNOD), recortado y con fondo
+                    transparente. Va en la pastilla blanca.
+    logo-marca.png  sólo la marca (anillo + X + nodos), cuadrada.
+                    Es la que se ve gigante de fondo, pintada de
+                    blanco por CSS.
+  Si alguna vez los reemplazás, respetá esos nombres y las páginas
+  los toman solas. Si los borrás, vuelve el logo dibujado en vectores
+  que quedó adentro del HTML como respaldo.
 
 SI APARECEN LAS FOTOS A ÚLTIMO MOMENTO
   Avisame y las vuelvo a poner: el diseño las soportaba y está a un

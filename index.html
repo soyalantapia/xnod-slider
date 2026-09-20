@@ -517,7 +517,7 @@ const SEGUNDOS_POR_SLIDE = 9;
   const probar = () => {
     if (i >= candidatos.length) return;            // se queda el SVG reconstruido
     const img = new Image();
-    img.onload  = () => { contenedor.innerHTML = ''; img.className = 'marca-logo'; contenedor.appendChild(img); };
+    img.onload  = () => { contenedor.innerHTML = ''; img.alt = 'XNOD'; contenedor.appendChild(img); };
     img.onerror = () => { i++; probar(); };
     img.src = candidatos[i];
   };
