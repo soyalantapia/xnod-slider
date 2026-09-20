@@ -48,7 +48,10 @@ body.mouse-visible{ cursor:default; }
   width:clamp(380px,66vh,820px); opacity:.13;
   animation:respira 14s ease-in-out infinite;
 }
-.marca-fondo svg{ width:100%; height:auto; display:block; }
+.marca-fondo img{ width:100%; height:auto; display:block; }
+/* La marca es violeta + gris oscuro: sobre el fondo violeta la X se
+   perdería, así que se la lleva a blanco puro. */
+.marca-fondo img{ filter:brightness(0) invert(1); }
 @keyframes respira{ 0%,100%{opacity:.11} 50%{opacity:.17} }
 
 /* Velo parejo: como el texto está centrado, no sirve el degradé lateral */
@@ -165,12 +168,7 @@ body.mouse-visible .hint{ opacity:1; }
 <canvas id="nodos"></canvas>
 
 <div class="marca-fondo" aria-hidden="true">
-  <svg viewBox="0 0 330 330" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g stroke="#FFF" stroke-width="34"><path d="M268.2 107.8 A118 118 0 0 1 107.8 268.2"/><path d="M61.8 222.2 A118 118 0 0 1 222.2 61.8"/></g>
-    <path d="M36 294 L294 36" stroke="#FFF" stroke-width="5" opacity=".8"/>
-    <path d="M93 93 L126 93 L165 144 L204 93 L237 93 L182.5 165 L237 237 L204 237 L165 186 L126 237 L93 237 L147.5 165 Z" stroke="#FFF" stroke-width="6.5" stroke-linejoin="round"/>
-    <circle cx="294" cy="36" r="26" fill="#FFF"/><circle cx="36" cy="294" r="26" fill="#FFF"/>
-  </svg>
+  <img src="logo-marca.png" alt="">
 </div>
 
 <main class="filmina" id="filmina"></main>
