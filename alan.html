@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo usar realmente la IA en mi empresa — Alan Tapia</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=supreme@400,500,700&display=swap">
+<style>
+/* ===========================================
+   1. TEMA
+   =========================================== */
+:root{
+  --violeta:#4B1FD8; --violeta-bright:#7B4DFF; --violeta-deep:#1B0552;
+  --blanco:#FFFFFF; --blanco-70:rgba(255,255,255,.70); --blanco-45:rgba(255,255,255,.45);
+  --blanco-18:rgba(255,255,255,.18); --blanco-08:rgba(255,255,255,.08);
+
+  --font-display:'Cabinet Grotesk','Avenir Next','Helvetica Neue',Arial,sans-serif;
+  --font-body:'Supreme','Avenir Next','Helvetica Neue',Arial,sans-serif;
+
+  --titulo:clamp(1.6rem,5.4vw,5.6rem);
+  --body:clamp(.85rem,1.55vw,1.85rem);
+  --small:clamp(.62rem,1vw,1.15rem);
+  --pad:clamp(1.2rem,4.5vw,5rem);
+  --gap:clamp(.5rem,2vh,1.8rem);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (max-height:700px){ :root{ --pad:clamp(.9rem,3.2vw,2.4rem); --titulo:clamp(1.4rem,4.4vw,3.6rem); } }
+@media (max-height:560px){ :root{ --pad:clamp(.6rem,2.4vw,1.4rem); --titulo:clamp(1.1rem,3.6vw,2.4rem); --body:clamp(.72rem,1.2vw,1.05rem); } }
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.2s !important; } }
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; overflow:hidden; }
+body{ font-family:var(--font-body); color:var(--blanco); background:var(--violeta-deep); -webkit-font-smoothing:antialiased; cursor:none; }
+body.mouse-visible{ cursor:default; }
+
+/* ===========================================
+   2. FONDO + LOGO DE FONDO
+   =========================================== */
+.fondo{
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(120% 90% at 78% 8%,  rgba(123,77,255,.55) 0%, transparent 55%),
+    radial-gradient(100% 80% at 12% 92%, rgba(75,31,216,.65) 0%, transparent 58%),
+    linear-gradient(160deg,#4B1FD8 0%,#33108F 50%,#200767 100%);
+}
+.fondo::after{ content:''; position:absolute; inset:0; background:radial-gradient(120% 100% at 50% 50%, transparent 42%, rgba(22,3,70,.64) 100%); }
+#nodos{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+.marca-fondo{
+  position:fixed; z-index:2; pointer-events:none;
+  top:50%; right:-9vw; transform:translateY(-50%);
+  width:clamp(340px,58vw,1000px); opacity:.08;
+  animation:respira 14s ease-in-out infinite;
+  transition:opacity .9s var(--ease), right .9s var(--ease);
+}
+.marca-fondo svg{ width:100%; height:auto; display:block; }
+@keyframes respira{ 0%,100%{opacity:.07} 50%{opacity:.11} }
+/* En las slides con foto a la derecha, el logo se corre a la izquierda
+   para no pelearse con la cara */
+body.con-foto .marca-fondo{ right:auto; left:-12vw; opacity:.055; }
+
+/* ===========================================
+   3. MARCA chica (todas las slides menos portada)
+   =========================================== */
+.marca{
+  position:fixed; z-index:40;
+  top:clamp(.9rem,3vh,2.2rem); right:clamp(1rem,3.2vw,3.2rem);
+  display:flex; align-items:center; gap:clamp(.4rem,.9vw,.8rem);
+  opacity:1; transition:opacity .6s var(--ease);
+}
+body.portada .marca{ opacity:0; }          /* en la portada manda el bloque grande */
+.marca .by{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.5rem,.85vw,1rem); letter-spacing:.22em;
+  text-transform:uppercase; color:var(--blanco-45);
+}
+.marca .pastilla{
+  color:var(--violeta); background:var(--blanco); border-radius:999px;
+  padding:clamp(.18rem,.42vh,.38rem) clamp(.4rem,.85vw,.78rem);
+  display:flex; align-items:center;
+}
+.marca .pastilla svg{ height:clamp(13px,2.1vh,26px); width:auto; display:block; }
+
+/* ===========================================
+   4. SLIDES
+   =========================================== */
+.escenario{ position:fixed; inset:0; z-index:10; }
+.slide{
+  position:absolute; inset:0; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:var(--pad); gap:var(--gap);
+  opacity:0; visibility:hidden;
+  transition:opacity .7s var(--ease), visibility .7s;
+}
+.slide.activa{ opacity:1; visibility:visible; }
+.slide.con-foto{ padding-right:clamp(10rem,44vw,44rem); }   /* deja lugar a la foto grande */
+
+.reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.slide.activa .reveal{ opacity:1; transform:translateY(0); }
+.slide.activa .reveal:nth-child(1){transition-delay:.10s}
+.slide.activa .reveal:nth-child(2){transition-delay:.20s}
+.slide.activa .reveal:nth-child(3){transition-delay:.30s}
+.slide.activa .reveal:nth-child(4){transition-delay:.40s}
+.slide.activa .reveal:nth-child(5){transition-delay:.50s}
+.slide.activa .reveal:nth-child(6){transition-delay:.60s}
+
+.kicker{
+  display:inline-flex; align-items:center; gap:.7em;
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small); letter-spacing:.3em; text-transform:uppercase; color:var(--blanco-70);
+}
+.kicker::before{ content:''; width:clamp(24px,4vw,64px); height:2px; background:var(--violeta-bright); }
+
+h1{ font-family:var(--font-display); font-weight:800; font-size:var(--titulo); line-height:.96; letter-spacing:-.035em; text-transform:uppercase; text-wrap:balance; max-width:17ch; }
+h2{ font-family:var(--font-display); font-weight:800; font-size:clamp(1.2rem,3.6vw,3.6rem); line-height:1; letter-spacing:-.03em; text-transform:uppercase; text-wrap:balance; max-width:20ch; }
+.texto{ font-size:var(--body); line-height:1.5; color:var(--blanco-70); max-width:40ch; }
+.texto strong{ color:var(--blanco); font-weight:600; }
+
+/* --- LA FOTO GRANDE DE LA DERECHA --- */
+.foto-grande{
+  position:fixed; z-index:20;
+  right:clamp(1.5rem,5vw,6rem); top:50%; transform:translateY(-50%);
+  width:clamp(220px,50vh,620px); height:clamp(220px,50vh,620px);
+  border-radius:50%; overflow:hidden;
+  border:5px solid var(--blanco);
+  box-shadow:0 0 0 clamp(10px,1.8vh,24px) rgba(123,77,255,.30), 0 40px 100px rgba(0,0,0,.55);
+  background:linear-gradient(150deg,var(--violeta),var(--violeta-deep));
+  opacity:0; visibility:hidden;
+  transition:opacity .7s var(--ease), visibility .7s, transform .7s var(--ease);
+}
+.foto-grande img{ width:100%; height:100%; object-fit:cover; display:block; }
+body.con-foto .foto-grande{ opacity:1; visibility:visible; }
+
+/* --- Credenciales --- */
+.credenciales{ display:flex; flex-direction:column; gap:clamp(.2rem,.9vh,.6rem); }
+.credencial{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(.85rem,1.85vw,2.1rem); line-height:1.25;
+  text-transform:uppercase; letter-spacing:.02em;
+  display:flex; align-items:baseline; gap:.6em;
+}
+.credencial::before{ content:''; width:clamp(8px,.9vw,14px); height:clamp(8px,.9vw,14px); border-radius:50%; background:var(--violeta-bright); flex:0 0 auto; }
+.credencial.suave{ color:var(--blanco-70); font-weight:500; }
+
+/* --- Bloque "by XNOD" GRANDE (portada y cierre) --- */
+.by-grande{ display:flex; flex-direction:column; gap:clamp(.4rem,1.2vh,.9rem); }
+.by-grande .evento{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.72rem,1.55vw,1.8rem); letter-spacing:.18em; text-transform:uppercase;
+  color:var(--blanco); padding-bottom:clamp(.35rem,.9vh,.7rem);
+  border-bottom:2px solid var(--violeta-bright); align-self:flex-start;
+}
+.by-grande .fila{ display:flex; align-items:center; gap:clamp(.55rem,1.4vw,1.2rem); }
+.by-grande .by{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.8rem,1.9vw,2.2rem); letter-spacing:.24em; text-transform:uppercase; color:var(--blanco-70);
+}
+.by-grande .pastilla{
+  color:var(--violeta); background:var(--blanco); border-radius:999px;
+  padding:clamp(.4rem,1vh,.9rem) clamp(.8rem,1.9vw,1.8rem);
+  display:flex; align-items:center;
+  box-shadow:0 10px 36px rgba(0,0,0,.3);
+}
+.by-grande .pastilla svg{ height:clamp(26px,5vh,64px); width:auto; display:block; }
+
+/* --- Listas numeradas (errores, pasos) --- */
+.items{ display:flex; flex-direction:column; gap:clamp(.35rem,1.3vh,1.1rem); }
+.item{ display:flex; align-items:baseline; gap:clamp(.7rem,1.8vw,1.6rem); padding-bottom:clamp(.3rem,1vh,.8rem); border-bottom:1px solid var(--blanco-08); }
+.item-num{ font-family:var(--font-display); font-weight:800; font-size:clamp(.8rem,1.6vw,1.8rem); color:var(--violeta-bright); flex:0 0 auto; min-width:2.2em; }
+.item-txt{ min-width:0; }
+.item-que{ font-family:var(--font-display); font-weight:800; font-size:clamp(.92rem,2vw,2.3rem); line-height:1.12; text-transform:uppercase; letter-spacing:-.015em; }
+.item-por{ font-size:clamp(.72rem,1.25vw,1.4rem); line-height:1.4; color:var(--blanco-70); margin-top:.25em; max-width:44ch; }
+
+/* --- Dos columnas (sí / no) --- */
+.columnas{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(.8rem,3vw,3.4rem); }
+@media (max-width:760px){ .columnas{ grid-template-columns:1fr; } }
+.col-titulo{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.85rem,1.75vw,2rem); text-transform:uppercase; letter-spacing:.04em;
+  padding-bottom:clamp(.3rem,.8vh,.6rem); margin-bottom:clamp(.4rem,1.2vh,.9rem);
+  border-bottom:2px solid currentColor;
+}
+.col.si .col-titulo{ color:var(--violeta-bright); }
+.col.no .col-titulo{ color:var(--blanco-45); }
+.col ul{ list-style:none; display:flex; flex-direction:column; gap:clamp(.25rem,.9vh,.6rem); }
+.col li{ font-size:clamp(.78rem,1.4vw,1.55rem); line-height:1.35; color:var(--blanco-70); display:flex; gap:.6em; }
+.col li::before{ content:'·'; color:var(--violeta-bright); font-weight:800; }
+
+/* --- Frase de cierre --- */
+.frase{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1.3rem,4.4vw,4.6rem); line-height:1.02; letter-spacing:-.03em;
+  max-width:20ch; text-wrap:balance;
+}
+.frase em{ font-style:normal; color:var(--violeta-bright); }
+
+/* ===========================================
+   5. PIE: posición + ayuda
+   =========================================== */
+.posicion{
+  position:fixed; bottom:clamp(.9rem,2.6vh,2rem); right:clamp(1rem,3.2vw,3.2rem); z-index:50;
+  font-family:var(--font-display); font-weight:700;
+  font-size:var(--small); letter-spacing:.18em; color:var(--blanco-45);
+  transition:opacity .6s;
+}
+body.portada .posicion{ opacity:0; }
+.barra{ position:fixed; bottom:0; left:0; z-index:50; height:3px; width:0%; background:linear-gradient(90deg,var(--violeta-bright),var(--blanco)); transition:width .5s var(--ease); }
+.keyboard-hint{
+  position:fixed; bottom:clamp(.9rem,2.6vh,2rem); left:clamp(1rem,3.2vw,3.2rem); z-index:50;
+  font-size:var(--small); letter-spacing:.1em; color:var(--blanco-45);
+  opacity:0; transition:opacity .4s;
+}
+body.mouse-visible .keyboard-hint{ opacity:1; }
+</style>
+</head>
+<body class="portada con-foto">
+
+<div class="fondo"></div>
+<canvas id="nodos"></canvas>
+
+<!-- LOGO DE FONDO -->
+<div class="marca-fondo" aria-hidden="true">
+  <svg viewBox="0 0 330 330" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#FFF" stroke-width="34"><path d="M268.2 107.8 A118 118 0 0 1 107.8 268.2"/><path d="M61.8 222.2 A118 118 0 0 1 222.2 61.8"/></g>
+    <path d="M36 294 L294 36" stroke="#FFF" stroke-width="5" opacity=".8"/>
+    <path d="M93 93 L126 93 L165 144 L204 93 L237 93 L182.5 165 L237 237 L204 237 L165 186 L126 237 L93 237 L147.5 165 Z" stroke="#FFF" stroke-width="6.5" stroke-linejoin="round"/>
+    <circle cx="294" cy="36" r="26" fill="#FFF"/><circle cx="36" cy="294" r="26" fill="#FFF"/>
+  </svg>
+</div>
+
+<!-- MARCA chica -->
+<div class="marca">
+  <span class="by">By</span>
+  <span class="pastilla" id="logoChico"></span>
+</div>
+
+<!-- LA FOTO GRANDE, A LA DERECHA -->
+<div class="foto-grande" id="fotoGrande"></div>
+
+<main class="escenario" id="escenario"></main>
+
+<div class="posicion" id="posicion"></div>
+<div class="barra" id="barra"></div>
+<div class="keyboard-hint">← → o clic para pasar · F pantalla completa · Inicio vuelve a la portada</div>
+
+<script>
+/* ===========================================================
+   ⚙️  CONFIGURACIÓN
+   =========================================================== */
+const CHARLA = {
+  titulo: "Cómo usar realmente la inteligencia artificial en mi empresa",
+  evento: "El espacio de los emprendedores",
+  orador: "Alan Tapia",
+  foto:   "speakers/01-alan-tapia.jpg",
+  credenciales: [
+    "Fundador de Xnod",
+    "CEO y Fundador de Deenex",
+    "Speaker",
+    "Advisor",
+  ],
+};
+
+/* ===========================================================
+   El logo, en SVG, reutilizado en los dos tamaños
+   =========================================================== */
+const LOGO = `<svg viewBox="0 0 1070 330" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="XNOD">
+  <g stroke="currentColor" stroke-width="34"><path d="M268.2 107.8 A118 118 0 0 1 107.8 268.2"/><path d="M61.8 222.2 A118 118 0 0 1 222.2 61.8"/></g>
+  <path d="M36 294 L294 36" stroke="currentColor" stroke-width="5" opacity=".8"/>
+  <path d="M93 93 L126 93 L165 144 L204 93 L237 93 L182.5 165 L237 237 L204 237 L165 186 L126 237 L93 237 L147.5 165 Z" stroke="currentColor" stroke-width="6.5" stroke-linejoin="round"/>
+  <circle cx="294" cy="36" r="26" fill="currentColor"/><circle cx="36" cy="294" r="26" fill="currentColor"/>
+  <g stroke="currentColor" stroke-width="9" stroke-linejoin="round">
+    <path d="M380 265 L380 65 L424 65 L526 213 L526 65 L570 65 L570 265 L526 265 L424 117 L424 265 Z"/>
+    <rect x="614" y="65" width="232" height="200" rx="100"/><rect x="658" y="109" width="144" height="112" rx="56"/>
+    <path d="M890 65 L950 65 A100 100 0 0 1 950 265 L890 265 Z"/><path d="M934 109 L950 109 A56 56 0 0 1 950 221 L934 221 Z"/>
+  </g></svg>`;
+
+document.getElementById('logoChico').innerHTML = LOGO;
+document.getElementById('fotoGrande').innerHTML =
+  `<img src="${CHARLA.foto}" alt="${CHARLA.orador}">`;
+
+const byGrande = `
+  <div class="by-grande reveal">
+    <div class="evento">${CHARLA.evento}</div>
+    <div class="fila"><span class="by">By</span><span class="pastilla">${LOGO}</span></div>
+  </div>`;
+
+/* ===========================================================
+   LAS SLIDES
+   `foto:true` = foto grande a la derecha (el logo de fondo se corre a la izquierda)
+   =========================================================== */
+const SLIDES = [
+
+/* 1 — PORTADA */
+{ foto:true, html:`
+  <h1 class="reveal">${CHARLA.titulo}</h1>
+  <div class="credenciales reveal" style="margin-top:.4em">
+    <div class="credencial">${CHARLA.orador}</div>
+  </div>
+  ${byGrande}` },
+
+/* 2 — QUIÉN HABLA */
+{ foto:true, html:`
+  <div class="kicker reveal">Quién les habla</div>
+  <h1 class="reveal" style="max-width:9ch">${CHARLA.orador}</h1>
+  <div class="credenciales reveal">
+    ${CHARLA.credenciales.map((c,i) => `<div class="credencial${i>1?' suave':''}">${c}</div>`).join('')}
+  </div>` },
+
+/* 3 — LA PREGUNTA */
+{ html:`
+  <div class="kicker reveal">Arranquemos por acá</div>
+  <h1 class="reveal">¿Cuántos probaron la IA alguna vez?</h1>
+  <h2 class="reveal" style="color:var(--violeta-bright)">¿Y cuántos la tienen metida en un proceso de su empresa?</h2>
+  <p class="texto reveal">Entre esas dos manos levantadas está toda esta charla.</p>` },
+
+/* 4 — EL PROBLEMA */
+{ html:`
+  <div class="kicker reveal">El problema</div>
+  <h1 class="reveal">Dejó de ser una novedad y todavía no es una herramienta</h1>
+  <p class="texto reveal">Todos la probaron. Casi nadie la puso a trabajar. No es un problema de tecnología: <strong>es un problema de cómo la estamos encarando.</strong></p>` },
+
+/* 5 — LOS TRES ERRORES */
+{ html:`
+  <div class="kicker reveal">Por qué no entra</div>
+  <h2 class="reveal">Los tres errores de siempre</h2>
+  <div class="items reveal">
+    <div class="item"><div class="item-num">01</div><div class="item-txt">
+      <div class="item-que">Esperar que adivine tu negocio</div>
+      <div class="item-por">No sabe cómo cobrás, a quién le vendés ni por qué perdiste el último cliente. Si no se lo contás, inventa.</div></div></div>
+    <div class="item"><div class="item-num">02</div><div class="item-txt">
+      <div class="item-que">Comprar la herramienta antes de tener el problema</div>
+      <div class="item-por">Se paga una licencia, se usa dos semanas y queda muerta. El problema va primero; la herramienta, después.</div></div></div>
+    <div class="item"><div class="item-num">03</div><div class="item-txt">
+      <div class="item-que">Pedirle magia en vez de tarea</div>
+      <div class="item-por">"Mejorá mi empresa" no es un pedido. "Redactá la respuesta a este reclamo con estos datos" sí lo es.</div></div></div>
+  </div>` },
+
+/* 6 — POR DÓNDE SE EMPIEZA */
+{ html:`
+  <div class="kicker reveal">Por dónde se empieza</div>
+  <h1 class="reveal">No por la tecnología. Por la tarea que ya odiás.</h1>
+  <p class="texto reveal">Buscá una que sea <strong>repetitiva</strong>, que se haga <strong>escribiendo</strong>, y que hoy la esté haciendo <strong>alguien caro</strong>. Ahí está tu primer caso.</p>` },
+
+/* 7 — EL MÉTODO */
+{ html:`
+  <div class="kicker reveal">El método</div>
+  <h2 class="reveal">Cuatro pasos, en este orden</h2>
+  <div class="items reveal">
+    <div class="item"><div class="item-num">01</div><div class="item-txt">
+      <div class="item-que">Elegí UNA sola tarea</div>
+      <div class="item-por">Una. La tentación de arrancar por cinco es la razón número uno de que no arranque ninguna.</div></div></div>
+    <div class="item"><div class="item-num">02</div><div class="item-txt">
+      <div class="item-que">Escribí cómo la hacés hoy</div>
+      <div class="item-por">Paso por paso, como si se lo explicaras a alguien que entra mañana. Ese texto es el 80% del trabajo.</div></div></div>
+    <div class="item"><div class="item-num">03</div><div class="item-txt">
+      <div class="item-que">Que la haga con vos al lado, una semana</div>
+      <div class="item-por">Vos revisás todo. Ahí aparece lo que hace bien y lo que todavía no.</div></div></div>
+    <div class="item"><div class="item-num">04</div><div class="item-txt">
+      <div class="item-que">Recién ahí, automatizá</div>
+      <div class="item-por">Automatizar antes de entender es multiplicar un error.</div></div></div>
+  </div>` },
+
+/* 8 — QUÉ SÍ Y QUÉ NO */
+{ html:`
+  <div class="kicker reveal">La línea</div>
+  <h2 class="reveal">Qué delegarle y qué no</h2>
+  <div class="columnas reveal">
+    <div class="col si">
+      <div class="col-titulo">Sí, hoy mismo</div>
+      <ul>
+        <li>Responder lo que ya respondiste mil veces</li>
+        <li>Armar propuestas y presupuestos</li>
+        <li>El seguimiento de cobranza</li>
+        <li>Convertir reuniones en tareas</li>
+        <li>La primera versión de todo</li>
+      </ul>
+    </div>
+    <div class="col no">
+      <div class="col-titulo">Todavía no</div>
+      <ul>
+        <li>La decisión final</li>
+        <li>La relación con el cliente</li>
+        <li>Lo que no sabés verificar</li>
+        <li>Lo que te expone si sale mal</li>
+      </ul>
+    </div>
+  </div>` },
+
+/* 9 — CÓMO SE MIDE */
+{ html:`
+  <div class="kicker reveal">Cómo saber si funcionó</div>
+  <h1 class="reveal">No se mide en innovación. Se mide en horas.</h1>
+  <p class="texto reveal">La pregunta al final del mes es una sola: <strong>¿cuántas horas por semana volvieron?</strong> Si no volvió ninguna, no lo implementaste: lo probaste.</p>` },
+
+/* 10 — CIERRE */
+{ foto:true, html:`
+  <div class="kicker reveal">Para cerrar</div>
+  <div class="frase reveal">La IA no te va a reemplazar.<br><em>Te va a devolver el tiempo que hoy regalás.</em></div>
+  ${byGrande}` },
+];
+
+/* ===========================================================
+   CONTROLADOR — presentación: pasa a mano, nunca sola
+   =========================================================== */
+class Presentacion{
+  constructor(){
+    this.escenario = document.getElementById('escenario');
+    this.posicion  = document.getElementById('posicion');
+    this.barra     = document.getElementById('barra');
+    this.i = 0;
+
+    this.escenario.innerHTML = SLIDES.map(s =>
+      `<section class="slide${s.foto ? ' con-foto' : ''}">${s.html}</section>`).join('');
+    this.slides = [...this.escenario.querySelectorAll('.slide')];
+
+    this.mostrar(0); this.teclado(); this.rueda(); this.tactil(); this.mouse();
+  }
+
+  mostrar(n){
+    this.i = Math.max(0, Math.min(n, this.slides.length - 1));
+    this.slides.forEach((s,k) => s.classList.toggle('activa', k === this.i));
+
+    // La foto grande y el corrimiento del logo de fondo dependen de la slide
+    document.body.classList.toggle('con-foto', !!SLIDES[this.i].foto);
+    document.body.classList.toggle('portada', this.i === 0);
+
+    this.posicion.textContent = `${this.i + 1} / ${this.slides.length}`;
+    this.barra.style.width = ((this.i + 1) / this.slides.length) * 100 + '%';
+  }
+  siguiente(){ this.mostrar(this.i + 1); }
+  anterior(){  this.mostrar(this.i - 1); }
+
+  teclado(){
+    addEventListener('keydown', e => {
+      const k = e.key;
+      if (k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); this.siguiente(); }
+      else if (k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); this.anterior(); }
+      else if (k==='Home'){ this.mostrar(0); }
+      else if (k==='End'){ this.mostrar(this.slides.length - 1); }
+      else if (k==='f'||k==='F'){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+    });
+  }
+  rueda(){
+    let libre = true;
+    addEventListener('wheel', e => {
+      e.preventDefault();
+      if (!libre || Math.abs(e.deltaY) < 4) return;
+      libre = false;
+      e.deltaY > 0 ? this.siguiente() : this.anterior();
+      setTimeout(() => libre = true, 600);
+    }, { passive:false });
+  }
+  tactil(){
+    let x0=null;
+    addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+    addEventListener('touchend', e => {
+      if (x0===null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 45) dx < 0 ? this.siguiente() : this.anterior();
+      x0 = null;
+    }, {passive:true});
+  }
+  mouse(){
+    let timer;
+    addEventListener('mousemove', () => {
+      document.body.classList.add('mouse-visible');
+      clearTimeout(timer);
+      timer = setTimeout(() => document.body.classList.remove('mouse-visible'), 2000);
+    });
+    addEventListener('click', () => this.siguiente());
+  }
+}
+
+/* ===========================================================
+   FONDO: RED DE NODOS
+   =========================================================== */
+(function redDeNodos(){
+  const cv = document.getElementById('nodos'), ctx = cv.getContext('2d');
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,dpr,puntos,viajes;
+
+  const halo = (r,g,b) => {
+    const c=document.createElement('canvas'), R=64; c.width=c.height=R*2;
+    const cx=c.getContext('2d'), gr=cx.createRadialGradient(R,R,0,R,R,R);
+    gr.addColorStop(0,`rgba(${r},${g},${b},1)`); gr.addColorStop(.12,`rgba(${r},${g},${b},.75)`);
+    gr.addColorStop(.32,`rgba(${r},${g},${b},.24)`); gr.addColorStop(.62,`rgba(${r},${g},${b},.06)`);
+    gr.addColorStop(1,`rgba(${r},${g},${b},0)`);
+    cx.fillStyle=gr; cx.fillRect(0,0,R*2,R*2); return c;
+  };
+  const hB = halo(255,255,255), hV = halo(170,140,255);
+
+  const medir = () => {
+    dpr = Math.min(devicePixelRatio||1,2);
+    w = cv.width = innerWidth*dpr; h = cv.height = innerHeight*dpr;
+    cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+    const n = Math.round(Math.min(64,(innerWidth*innerHeight)/24000));
+    puntos = Array.from({length:n}, () => {
+      const g = Math.random()<.22;
+      return { x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-.5)*.24*dpr, vy:(Math.random()-.5)*.24*dpr,
+        r:(g?Math.random()*3.2+3:Math.random()*2+1.4)*dpr,
+        violeta:Math.random()<.34, grande:g,
+        fase:Math.random()*Math.PI*2, vel:.6+Math.random()*1.1 };
+    });
+    viajes = [];
+  };
+  const ALC=165, MAXV=8;
+  const nuevo = max => { for(let t=0;t<14;t++){ const a=(Math.random()*puntos.length)|0,b=(Math.random()*puntos.length)|0;
+    if(a===b) continue; if((puntos[a].x-puntos[b].x)**2+(puntos[a].y-puntos[b].y)**2<max) return {a,b,t:0,vel:.0035+Math.random()*.005}; } return null; };
+
+  const dibujar = ms => {
+    const t=ms/1000, max=ALC*ALC*dpr*dpr;
+    ctx.clearRect(0,0,w,h); ctx.globalCompositeOperation='source-over';
+    for(let i=0;i<puntos.length;i++){
+      const p=puntos[i];
+      if(!quieto){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1; }
+      for(let j=i+1;j<puntos.length;j++){
+        const q=puntos[j], d=(p.x-q.x)**2+(p.y-q.y)**2;
+        if(d<max){ const c=1-d/max;
+          ctx.strokeStyle=(p.violeta&&q.violeta)?`rgba(180,150,255,${c*.40})`:`rgba(255,255,255,${c*.28})`;
+          ctx.lineWidth=dpr*(.7+c*.9); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); }
+      }
+    }
+    if(!quieto){
+      while(viajes.length<MAXV){ const v=nuevo(max); if(!v) break; viajes.push(v); }
+      ctx.globalCompositeOperation='lighter';
+      for(let k=viajes.length-1;k>=0;k--){
+        const v=viajes[k]; v.t+=v.vel; const a=puntos[v.a], b=puntos[v.b];
+        if(v.t>=1||(a.x-b.x)**2+(a.y-b.y)**2>max){ viajes.splice(k,1); continue; }
+        const x=a.x+(b.x-a.x)*v.t, y=a.y+(b.y-a.y)*v.t, f=Math.sin(v.t*Math.PI), rad=12*dpr*f;
+        ctx.globalAlpha=f*.9; ctx.drawImage(hB,x-rad,y-rad,rad*2,rad*2); ctx.globalAlpha=1;
+      }
+    }
+    ctx.globalCompositeOperation='lighter';
+    for(const p of puntos){
+      const late=quieto?1:1+Math.sin(t*p.vel+p.fase)*.38, ha=p.r*(p.grande?7:5.2)*late;
+      ctx.globalAlpha=(p.grande?.8:.58)*(quieto?1:.72+Math.sin(t*p.vel+p.fase)*.28);
+      ctx.drawImage(p.violeta?hV:hB, p.x-ha, p.y-ha, ha*2, ha*2);
+      ctx.globalAlpha=1; ctx.fillStyle=p.violeta?'rgba(215,200,255,.95)':'rgba(255,255,255,.95)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*late*.55,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+    requestAnimationFrame(dibujar);
+  };
+  medir(); addEventListener('resize', medir); requestAnimationFrame(dibujar);
+})();
+
+new Presentacion();
+</script>
+</body>
+</html>
