@@ -104,10 +104,7 @@ centrada: son dos personas de igual peso.
 
   F   pantalla completa. Nada más.
 
-⚠️ FALTA LA FOTO DE JUAN PABLO ZANINETTI. Mientras no esté aparecen
-sus iniciales (JP) sobre violeta. Va en:
-    speakers/11-juan-pablo-zaninetti.jpg
-(cuadrada, mínimo 600x600).
+Las dos fotos ya están cargadas.
 
 ─────────────────────────────────────────────────────────
 EL LOGO
