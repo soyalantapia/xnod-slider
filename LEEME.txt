@@ -88,3 +88,31 @@ Si alguna vez querés la versión larga (eran 9 slides con el
 contenido de la charla), está en el historial de git:
   git log --oneline -- alan.html
   git show f0faed3:alan.html > alan-larga.html
+
+─────────────────────────────────────────────────────────
+TERCERA PÁGINA: panel.html
+─────────────────────────────────────────────────────────
+UNA FILMINA para el panel de Alan Tapia y Juan Pablo Zaninetti.
+Tampoco pasa a otra: pantalla fija con el fondo animado.
+
+  Título:  Inteligencia artificial, negocios, emprendedurismo
+  Abajo:   las dos caras, una al lado de la otra
+  Cierre:  "Ambos son fundadores de XNOD"
+
+A diferencia de la de Alan (texto izquierda / foto derecha), esta va
+centrada: son dos personas de igual peso.
+
+  F   pantalla completa. Nada más.
+
+⚠️ FALTA LA FOTO DE JUAN PABLO ZANINETTI. Mientras no esté aparecen
+sus iniciales (JP) sobre violeta. Va en:
+    speakers/11-juan-pablo-zaninetti.jpg
+(cuadrada, mínimo 600x600).
+
+─────────────────────────────────────────────────────────
+EL LOGO
+─────────────────────────────────────────────────────────
+Ya está el archivo real: logo.png, en la raíz. Las tres páginas lo
+detectan solas y lo usan en lugar del que estaba dibujado a mano.
+Viene recortado del original (se le sacó el marco blanco) y con el
+fondo transparente.
