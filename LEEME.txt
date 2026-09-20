@@ -63,9 +63,17 @@ UNA SOLA FILMINA para la charla de Alan Tapia. No pasa a otra:
 es una pantalla fija con el fondo animado.
 
 Tiene todo junto: "El espacio de los emprendedores", el by Xnod
-grande, el título, el subtítulo, quién es Alan (Fundador de Xnod ·
-CEO y Fundador de Deenex · Speaker · Advisor), el @soyalantapia,
-y la foto grande a la derecha.
+grande, el título, el subtítulo, la foto grande a la derecha, y el
+bloque de quién es Alan:
+
+    │ ALAN TAPIA
+    │ Fundador de XNOD
+    │ CEO y Fundador de DEENEX
+    │ [SPEAKER] [ADVISOR] [@soyalantapia]
+
+Los cargos que pesan van uno por línea, con la empresa destacada;
+lo demás baja a etiquetas. En el objeto CHARLA eso son dos campos
+distintos: `roles` (que + donde) y `etiquetas`.
 
   F   pantalla completa. Nada más.
 
