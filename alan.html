@@ -86,13 +86,27 @@ body.portada .marca{ opacity:0; }          /* en la portada manda el bloque gran
    4. SLIDES
    =========================================== */
 .escenario{ position:fixed; inset:0; z-index:10; }
+/* Bandas de alto FIJO. Es lo que hace que al pasar de slide el titulo no
+   salte: el kicker, el titulo y el cuerpo arrancan siempre en el mismo y,
+   tenga el titulo una linea o tres. */
 .slide{
   position:absolute; inset:0; overflow:hidden;
-  display:flex; flex-direction:column; justify-content:center;
-  padding:var(--pad); gap:var(--gap);
+  display:grid;
+  grid-template-rows:
+    clamp(1rem,5.5vh,3.2rem)      /* banda del kicker  */
+    clamp(4rem,29vh,18rem)        /* banda del titulo  */
+    minmax(0,1fr);                /* cuerpo            */
+  align-content:start;
+  padding:clamp(1.2rem,9vh,6rem) var(--pad) var(--pad);
   opacity:0; visibility:hidden;
   transition:opacity .7s var(--ease), visibility .7s;
 }
+.banda-kicker{ grid-row:1; align-self:end; }
+.banda-titulo{ grid-row:2; display:flex; align-items:flex-start; }
+.banda-cuerpo{ grid-row:3; display:flex; flex-direction:column; gap:var(--gap); min-height:0; overflow:hidden; }
+
+/* La portada lleva un titulo largo: un punto menos de cuerpo para que entre */
+.slide.portada h1{ font-size:clamp(1.4rem,4.5vw,4.5rem); }
 .slide.activa{ opacity:1; visibility:visible; }
 .slide.con-foto{ padding-right:clamp(10rem,44vw,44rem); }   /* deja lugar a la foto grande */
 
@@ -165,8 +179,8 @@ body.con-foto .foto-grande{ opacity:1; visibility:visible; }
 .by-grande .pastilla svg{ height:clamp(26px,5vh,64px); width:auto; display:block; }
 
 /* --- Listas numeradas (errores, pasos) --- */
-.items{ display:flex; flex-direction:column; gap:clamp(.35rem,1.3vh,1.1rem); }
-.item{ display:flex; align-items:baseline; gap:clamp(.7rem,1.8vw,1.6rem); padding-bottom:clamp(.3rem,1vh,.8rem); border-bottom:1px solid var(--blanco-08); }
+.items{ display:flex; flex-direction:column; gap:clamp(.25rem,1vh,.85rem); }
+.item{ display:flex; align-items:baseline; gap:clamp(.7rem,1.8vw,1.6rem); padding-bottom:clamp(.22rem,.8vh,.62rem); border-bottom:1px solid var(--blanco-08); }
 .item-num{ font-family:var(--font-display); font-weight:800; font-size:clamp(.8rem,1.6vw,1.8rem); color:var(--violeta-bright); flex:0 0 auto; min-width:2.2em; }
 .item-txt{ min-width:0; }
 .item-que{ font-family:var(--font-display); font-weight:800; font-size:clamp(.92rem,2vw,2.3rem); line-height:1.12; text-transform:uppercase; letter-spacing:-.015em; }
@@ -205,7 +219,7 @@ body.con-foto .foto-grande{ opacity:1; visibility:visible; }
   transition:opacity .6s;
 }
 body.portada .posicion{ opacity:0; }
-.barra{ position:fixed; bottom:0; left:0; z-index:50; height:3px; width:0%; background:linear-gradient(90deg,var(--violeta-bright),var(--blanco)); transition:width .5s var(--ease); }
+.barra{ position:fixed; bottom:0; left:0; z-index:50; height:3px; width:0%; background:linear-gradient(90deg,var(--violeta-bright),var(--blanco)); box-shadow:0 0 14px rgba(123,77,255,.8); transition:opacity .4s; }
 .keyboard-hint{
   position:fixed; bottom:clamp(.9rem,2.6vh,2rem); left:clamp(1rem,3.2vw,3.2rem); z-index:50;
   font-size:var(--small); letter-spacing:.1em; color:var(--blanco-45);
@@ -242,12 +256,15 @@ body.mouse-visible .keyboard-hint{ opacity:1; }
 
 <div class="posicion" id="posicion"></div>
 <div class="barra" id="barra"></div>
-<div class="keyboard-hint">← → o clic para pasar · F pantalla completa · Inicio vuelve a la portada</div>
+<div class="keyboard-hint">Gira solo · ← → o clic para adelantar · Espacio pausa · F pantalla completa</div>
 
 <script>
 /* ===========================================================
    ⚙️  CONFIGURACIÓN
    =========================================================== */
+/* Cuánto dura cada slide. Ponelo en 0 si alguna vez querés pasarlas a mano. */
+const SEGUNDOS_POR_SLIDE = 12;
+
 const CHARLA = {
   titulo: "Cómo usar realmente la inteligencia artificial en mi empresa",
   evento: "El espacio de los emprendedores",
@@ -287,117 +304,137 @@ const byGrande = `
 
 /* ===========================================================
    LAS SLIDES
-   `foto:true` = foto grande a la derecha (el logo de fondo se corre a la izquierda)
+
+   Todas se arman con la misma función, así el kicker, el título y el
+   cuerpo caen SIEMPRE en el mismo lugar de la pantalla. Al pasar de
+   slide cambia el contenido, no la posición.
+
+   foto:true = foto grande a la derecha.
    =========================================================== */
+const slide = ({ kicker='', titulo='', cuerpo='', foto=false, portada=false }) => ({
+  foto, portada,
+  html: `
+    <div class="banda-kicker">${kicker ? `<div class="kicker reveal">${kicker}</div>` : ''}</div>
+    <div class="banda-titulo">${titulo ? `<div class="reveal">${titulo}</div>` : ''}</div>
+    <div class="banda-cuerpo">${cuerpo}</div>`
+});
+
 const SLIDES = [
 
 /* 1 — PORTADA */
-{ foto:true, html:`
-  <h1 class="reveal">${CHARLA.titulo}</h1>
-  <div class="credenciales reveal" style="margin-top:.4em">
-    <div class="credencial">${CHARLA.orador}</div>
-  </div>
-  ${byGrande}` },
+slide({ foto:true, portada:true,
+  titulo:`<h1>${CHARLA.titulo}</h1>`,
+  cuerpo:`
+    <div class="credenciales reveal"><div class="credencial">${CHARLA.orador}</div></div>
+    ${byGrande}` }),
 
 /* 2 — QUIÉN HABLA */
-{ foto:true, html:`
-  <div class="kicker reveal">Quién les habla</div>
-  <h1 class="reveal" style="max-width:9ch">${CHARLA.orador}</h1>
-  <div class="credenciales reveal">
-    ${CHARLA.credenciales.map((c,i) => `<div class="credencial${i>1?' suave':''}">${c}</div>`).join('')}
-  </div>` },
+slide({ foto:true,
+  kicker:`Quién les habla`,
+  titulo:`<h1 style="max-width:9ch">${CHARLA.orador}</h1>`,
+  cuerpo:`
+    <div class="credenciales reveal">
+      ${CHARLA.credenciales.map((c,i) => `<div class="credencial${i>1?' suave':''}">${c}</div>`).join('')}
+    </div>` }),
 
 /* 3 — LA PREGUNTA */
-{ html:`
-  <div class="kicker reveal">Arranquemos por acá</div>
-  <h1 class="reveal">¿Cuántos probaron la IA alguna vez?</h1>
-  <h2 class="reveal" style="color:var(--violeta-bright)">¿Y cuántos la tienen metida en un proceso de su empresa?</h2>
-  <p class="texto reveal">Entre esas dos manos levantadas está toda esta charla.</p>` },
+slide({
+  kicker:`Arranquemos por acá`,
+  titulo:`<h1>¿Cuántos probaron la IA alguna vez?</h1>`,
+  cuerpo:`
+    <h2 class="reveal" style="color:var(--violeta-bright)">¿Y cuántos la tienen metida en un proceso de su empresa?</h2>
+    <p class="texto reveal">Entre esas dos manos levantadas está toda esta charla.</p>` }),
 
 /* 4 — EL PROBLEMA */
-{ html:`
-  <div class="kicker reveal">El problema</div>
-  <h1 class="reveal">Dejó de ser una novedad y todavía no es una herramienta</h1>
-  <p class="texto reveal">Todos la probaron. Casi nadie la puso a trabajar. No es un problema de tecnología: <strong>es un problema de cómo la estamos encarando.</strong></p>` },
+slide({
+  kicker:`El problema`,
+  titulo:`<h1>Dejó de ser una novedad y todavía no es una herramienta</h1>`,
+  cuerpo:`
+    <p class="texto reveal">Todos la probaron. Casi nadie la puso a trabajar. No es un problema de tecnología: <strong>es un problema de cómo la estamos encarando.</strong></p>` }),
 
 /* 5 — LOS TRES ERRORES */
-{ html:`
-  <div class="kicker reveal">Por qué no entra</div>
-  <h2 class="reveal">Los tres errores de siempre</h2>
-  <div class="items reveal">
-    <div class="item"><div class="item-num">01</div><div class="item-txt">
-      <div class="item-que">Esperar que adivine tu negocio</div>
-      <div class="item-por">No sabe cómo cobrás, a quién le vendés ni por qué perdiste el último cliente. Si no se lo contás, inventa.</div></div></div>
-    <div class="item"><div class="item-num">02</div><div class="item-txt">
-      <div class="item-que">Comprar la herramienta antes de tener el problema</div>
-      <div class="item-por">Se paga una licencia, se usa dos semanas y queda muerta. El problema va primero; la herramienta, después.</div></div></div>
-    <div class="item"><div class="item-num">03</div><div class="item-txt">
-      <div class="item-que">Pedirle magia en vez de tarea</div>
-      <div class="item-por">"Mejorá mi empresa" no es un pedido. "Redactá la respuesta a este reclamo con estos datos" sí lo es.</div></div></div>
-  </div>` },
+slide({
+  kicker:`Por qué no entra`,
+  titulo:`<h2>Los tres errores de siempre</h2>`,
+  cuerpo:`
+    <div class="items reveal">
+      <div class="item"><div class="item-num">01</div><div class="item-txt">
+        <div class="item-que">Esperar que adivine tu negocio</div>
+        <div class="item-por">No sabe cómo cobrás, a quién le vendés ni por qué perdiste el último cliente. Si no se lo contás, inventa.</div></div></div>
+      <div class="item"><div class="item-num">02</div><div class="item-txt">
+        <div class="item-que">Comprar la herramienta antes de tener el problema</div>
+        <div class="item-por">Se paga una licencia, se usa dos semanas y queda muerta. El problema va primero; la herramienta, después.</div></div></div>
+      <div class="item"><div class="item-num">03</div><div class="item-txt">
+        <div class="item-que">Pedirle magia en vez de tarea</div>
+        <div class="item-por">"Mejorá mi empresa" no es un pedido. "Redactá la respuesta a este reclamo con estos datos" sí lo es.</div></div></div>
+    </div>` }),
 
 /* 6 — POR DÓNDE SE EMPIEZA */
-{ html:`
-  <div class="kicker reveal">Por dónde se empieza</div>
-  <h1 class="reveal">No por la tecnología. Por la tarea que ya odiás.</h1>
-  <p class="texto reveal">Buscá una que sea <strong>repetitiva</strong>, que se haga <strong>escribiendo</strong>, y que hoy la esté haciendo <strong>alguien caro</strong>. Ahí está tu primer caso.</p>` },
+slide({
+  kicker:`Por dónde se empieza`,
+  titulo:`<h1>No por la tecnología. Por la tarea que ya odiás.</h1>`,
+  cuerpo:`
+    <p class="texto reveal">Buscá una que sea <strong>repetitiva</strong>, que se haga <strong>escribiendo</strong>, y que hoy la esté haciendo <strong>alguien caro</strong>. Ahí está tu primer caso.</p>` }),
 
 /* 7 — EL MÉTODO */
-{ html:`
-  <div class="kicker reveal">El método</div>
-  <h2 class="reveal">Cuatro pasos, en este orden</h2>
-  <div class="items reveal">
-    <div class="item"><div class="item-num">01</div><div class="item-txt">
-      <div class="item-que">Elegí UNA sola tarea</div>
-      <div class="item-por">Una. La tentación de arrancar por cinco es la razón número uno de que no arranque ninguna.</div></div></div>
-    <div class="item"><div class="item-num">02</div><div class="item-txt">
-      <div class="item-que">Escribí cómo la hacés hoy</div>
-      <div class="item-por">Paso por paso, como si se lo explicaras a alguien que entra mañana. Ese texto es el 80% del trabajo.</div></div></div>
-    <div class="item"><div class="item-num">03</div><div class="item-txt">
-      <div class="item-que">Que la haga con vos al lado, una semana</div>
-      <div class="item-por">Vos revisás todo. Ahí aparece lo que hace bien y lo que todavía no.</div></div></div>
-    <div class="item"><div class="item-num">04</div><div class="item-txt">
-      <div class="item-que">Recién ahí, automatizá</div>
-      <div class="item-por">Automatizar antes de entender es multiplicar un error.</div></div></div>
-  </div>` },
+slide({
+  kicker:`El método`,
+  titulo:`<h2>Cuatro pasos, en este orden</h2>`,
+  cuerpo:`
+    <div class="items reveal">
+      <div class="item"><div class="item-num">01</div><div class="item-txt">
+        <div class="item-que">Elegí UNA sola tarea</div>
+        <div class="item-por">Una. La tentación de arrancar por cinco es la razón número uno de que no arranque ninguna.</div></div></div>
+      <div class="item"><div class="item-num">02</div><div class="item-txt">
+        <div class="item-que">Escribí cómo la hacés hoy</div>
+        <div class="item-por">Paso por paso, como si se lo explicaras a alguien que entra mañana. Ese texto es el 80% del trabajo.</div></div></div>
+      <div class="item"><div class="item-num">03</div><div class="item-txt">
+        <div class="item-que">Que la haga con vos al lado, una semana</div>
+        <div class="item-por">Vos revisás todo. Ahí aparece lo que hace bien y lo que todavía no.</div></div></div>
+      <div class="item"><div class="item-num">04</div><div class="item-txt">
+        <div class="item-que">Recién ahí, automatizá</div>
+        <div class="item-por">Automatizar antes de entender es multiplicar un error.</div></div></div>
+    </div>` }),
 
 /* 8 — QUÉ SÍ Y QUÉ NO */
-{ html:`
-  <div class="kicker reveal">La línea</div>
-  <h2 class="reveal">Qué delegarle y qué no</h2>
-  <div class="columnas reveal">
-    <div class="col si">
-      <div class="col-titulo">Sí, hoy mismo</div>
-      <ul>
-        <li>Responder lo que ya respondiste mil veces</li>
-        <li>Armar propuestas y presupuestos</li>
-        <li>El seguimiento de cobranza</li>
-        <li>Convertir reuniones en tareas</li>
-        <li>La primera versión de todo</li>
-      </ul>
-    </div>
-    <div class="col no">
-      <div class="col-titulo">Todavía no</div>
-      <ul>
-        <li>La decisión final</li>
-        <li>La relación con el cliente</li>
-        <li>Lo que no sabés verificar</li>
-        <li>Lo que te expone si sale mal</li>
-      </ul>
-    </div>
-  </div>` },
+slide({
+  kicker:`La línea`,
+  titulo:`<h2>Qué delegarle y qué no</h2>`,
+  cuerpo:`
+    <div class="columnas reveal">
+      <div class="col si">
+        <div class="col-titulo">Sí, hoy mismo</div>
+        <ul>
+          <li>Responder lo que ya respondiste mil veces</li>
+          <li>Armar propuestas y presupuestos</li>
+          <li>El seguimiento de cobranza</li>
+          <li>Convertir reuniones en tareas</li>
+          <li>La primera versión de todo</li>
+        </ul>
+      </div>
+      <div class="col no">
+        <div class="col-titulo">Todavía no</div>
+        <ul>
+          <li>La decisión final</li>
+          <li>La relación con el cliente</li>
+          <li>Lo que no sabés verificar</li>
+          <li>Lo que te expone si sale mal</li>
+        </ul>
+      </div>
+    </div>` }),
 
 /* 9 — CÓMO SE MIDE */
-{ html:`
-  <div class="kicker reveal">Cómo saber si funcionó</div>
-  <h1 class="reveal">No se mide en innovación. Se mide en horas.</h1>
-  <p class="texto reveal">La pregunta al final del mes es una sola: <strong>¿cuántas horas por semana volvieron?</strong> Si no volvió ninguna, no lo implementaste: lo probaste.</p>` },
+slide({
+  kicker:`Cómo saber si funcionó`,
+  titulo:`<h1>No se mide en innovación. Se mide en horas.</h1>`,
+  cuerpo:`
+    <p class="texto reveal">La pregunta al final del mes es una sola: <strong>¿cuántas horas por semana volvieron?</strong> Si no volvió ninguna, no lo implementaste: lo probaste.</p>` }),
 
 /* 10 — CIERRE */
-{ foto:true, html:`
-  <div class="kicker reveal">Para cerrar</div>
-  <div class="frase reveal">La IA no te va a reemplazar.<br><em>Te va a devolver el tiempo que hoy regalás.</em></div>
-  ${byGrande}` },
+slide({ foto:true,
+  kicker:`Para cerrar`,
+  titulo:`<div class="frase">La IA no te va a reemplazar.<br><em>Te va a devolver el tiempo que hoy regalás.</em></div>`,
+  cuerpo: byGrande }),
 ];
 
 /* ===========================================================
@@ -408,34 +445,58 @@ class Presentacion{
     this.escenario = document.getElementById('escenario');
     this.posicion  = document.getElementById('posicion');
     this.barra     = document.getElementById('barra');
-    this.i = 0;
+    this.i = 0; this.pausado = false; this.t0 = 0;
 
     this.escenario.innerHTML = SLIDES.map(s =>
-      `<section class="slide${s.foto ? ' con-foto' : ''}">${s.html}</section>`).join('');
+      `<section class="slide${s.foto ? ' con-foto' : ''}${s.portada ? ' portada' : ''}">${s.html}</section>`
+    ).join('');
     this.slides = [...this.escenario.querySelectorAll('.slide')];
 
-    this.mostrar(0); this.teclado(); this.rueda(); this.tactil(); this.mouse();
+    this.mostrar(0);
+    this.tick();
+    this.teclado(); this.rueda(); this.tactil(); this.mouse();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.t0 = performance.now(); });
   }
 
   mostrar(n){
-    this.i = Math.max(0, Math.min(n, this.slides.length - 1));
+    this.i = (n + this.slides.length) % this.slides.length;   // gira en loop
     this.slides.forEach((s,k) => s.classList.toggle('activa', k === this.i));
 
     // La foto grande y el corrimiento del logo de fondo dependen de la slide
     document.body.classList.toggle('con-foto', !!SLIDES[this.i].foto);
-    document.body.classList.toggle('portada', this.i === 0);
+    document.body.classList.toggle('portada',  !!SLIDES[this.i].portada);
 
     this.posicion.textContent = `${this.i + 1} / ${this.slides.length}`;
-    this.barra.style.width = ((this.i + 1) / this.slides.length) * 100 + '%';
+    this.t0 = performance.now();
   }
   siguiente(){ this.mostrar(this.i + 1); }
   anterior(){  this.mostrar(this.i - 1); }
 
+  /* Gira solo. La barra de abajo muestra cuánto falta para la próxima. */
+  tick(){
+    const paso = t => {
+      if (SEGUNDOS_POR_SLIDE > 0 && !this.pausado){
+        const avance = (t - this.t0) / (SEGUNDOS_POR_SLIDE * 1000);
+        this.barra.style.width = Math.min(avance,1) * 100 + '%';
+        if (avance >= 1) this.siguiente();
+      }
+      requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  }
+
+  togglePausa(){
+    this.pausado = !this.pausado;
+    this.barra.style.opacity = this.pausado ? .25 : 1;
+    if (!this.pausado) this.t0 = performance.now();
+  }
+
   teclado(){
     addEventListener('keydown', e => {
       const k = e.key;
-      if (k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'||k===' '){ e.preventDefault(); this.siguiente(); }
+      if (k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'){ e.preventDefault(); this.siguiente(); }
       else if (k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'){ e.preventDefault(); this.anterior(); }
+      else if (k===' '){ e.preventDefault(); this.togglePausa(); }
       else if (k==='Home'){ this.mostrar(0); }
       else if (k==='End'){ this.mostrar(this.slides.length - 1); }
       else if (k==='f'||k==='F'){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
