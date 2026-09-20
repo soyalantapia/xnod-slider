@@ -60,7 +60,13 @@ INTERNET
 SEGUNDA PÁGINA: alan.html
 ─────────────────────────────────────────────────────────
 Presentación de la charla de Alan Tapia, "Cómo usar realmente la
-inteligencia artificial en mi empresa". 10 slides.
+inteligencia artificial en mi empresa". 9 slides.
+
+La PRIMERA lleva todo junto: "El espacio de los emprendedores",
+el by Xnod grande, el título, el subtítulo, quién es Alan
+(Fundador de Xnod · CEO y Fundador de Deenex · Speaker · Advisor)
+y el @soyalantapia. Todo en una sola pantalla, con la foto grande
+a la derecha. El arroba también aparece en el cierre.
 
 GIRA SOLA, en loop (12 segundos por slide). La barra de abajo muestra
 cuánto falta para la próxima.
@@ -69,7 +75,7 @@ cuánto falta para la próxima.
   Espacio      pausar / reanudar
   Inicio / Fin primera / última
   F            pantalla completa
-Abajo a la derecha ves en qué slide estás (3 / 10).
+Abajo a la derecha ves en qué slide estás (3 / 9).
 Para cambiar el ritmo o pasarlas a mano: SEGUNDOS_POR_SLIDE arriba de
 todo en alan.html (0 = sólo a mano).
 
@@ -78,6 +84,6 @@ así que al pasar de slide NO se mueven de lugar: cambia el contenido,
 no la posición.
 
 Foto grande a la derecha en portada, bio y cierre.
-El contenido de las slides 3 a 9 es un BORRADOR: está escrito para
+El contenido de las slides 2 a 8 es un BORRADOR: está escrito para
 que se sostenga solo, pero es la charla de Alan — cambiala hasta que
 suene a él. Todo el texto está en el array SLIDES de alan.html.

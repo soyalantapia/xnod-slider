@@ -105,8 +105,44 @@ body.portada .marca{ opacity:0; }          /* en la portada manda el bloque gran
 .banda-titulo{ grid-row:2; display:flex; align-items:flex-start; }
 .banda-cuerpo{ grid-row:3; display:flex; flex-direction:column; gap:var(--gap); min-height:0; overflow:hidden; }
 
-/* La portada lleva un titulo largo: un punto menos de cuerpo para que entre */
-.slide.portada h1{ font-size:clamp(1.4rem,4.5vw,4.5rem); }
+/* ---- LA PORTADA ----
+   Se sale de las bandas a propósito: acá tiene que entrar TODO junto
+   (marca, título, subtítulo, quién es y el arroba), así que se acomoda
+   como una columna centrada. */
+.slide.portada{
+  display:flex; flex-direction:column; justify-content:center;
+  gap:clamp(.7rem,2.6vh,2.2rem);
+  padding:var(--pad);
+  padding-right:clamp(10rem,44vw,44rem);   /* le deja el lugar a la foto */
+}
+.slide.portada h1{
+  font-size:clamp(1.3rem,4.2vw,4.2rem); line-height:.98; max-width:15ch;
+}
+.portada-sub{
+  font-size:clamp(.78rem,1.5vw,1.75rem); line-height:1.4;
+  color:var(--blanco-70); max-width:34ch;
+}
+.portada-autor{ display:flex; flex-direction:column; gap:clamp(.22rem,.9vh,.6rem); }
+.portada-nombre{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1rem,2.3vw,2.6rem); line-height:1;
+  text-transform:uppercase; letter-spacing:-.02em;
+}
+.portada-creds{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.68rem,1.22vw,1.4rem); line-height:1.45;
+  color:var(--blanco-70); max-width:64ch;
+}
+.portada-creds b{ font-weight:700; color:var(--blanco); }
+.arroba{
+  display:inline-flex; align-self:flex-start; align-items:center;
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.75rem,1.45vw,1.6rem); letter-spacing:.06em;
+  color:var(--blanco);
+  margin-top:clamp(.15rem,.7vh,.5rem);
+  padding:.26em .9em; border-radius:999px;
+  background:rgba(123,77,255,.42); border:1px solid rgba(160,125,255,.75);
+}
 .slide.activa{ opacity:1; visibility:visible; }
 .slide.con-foto{ padding-right:clamp(10rem,44vw,44rem); }   /* deja lugar a la foto grande */
 
@@ -266,10 +302,12 @@ body.mouse-visible .keyboard-hint{ opacity:1; }
 const SEGUNDOS_POR_SLIDE = 12;
 
 const CHARLA = {
-  titulo: "Cómo usar realmente la inteligencia artificial en mi empresa",
-  evento: "El espacio de los emprendedores",
-  orador: "Alan Tapia",
-  foto:   "speakers/01-alan-tapia.jpg",
+  titulo:    "Cómo usar realmente la inteligencia artificial en mi empresa",
+  subtitulo: "Sin humo. Por dónde empezar, qué delegarle y cómo saber si funcionó.",
+  evento:    "El espacio de los emprendedores",
+  orador:    "Alan Tapia",
+  arroba:    "@soyalantapia",
+  foto:      "speakers/01-alan-tapia.jpg",
   credenciales: [
     "Fundador de Xnod",
     "CEO y Fundador de Deenex",
@@ -321,21 +359,21 @@ const slide = ({ kicker='', titulo='', cuerpo='', foto=false, portada=false }) =
 
 const SLIDES = [
 
-/* 1 — PORTADA */
-slide({ foto:true, portada:true,
-  titulo:`<h1>${CHARLA.titulo}</h1>`,
-  cuerpo:`
-    <div class="credenciales reveal"><div class="credencial">${CHARLA.orador}</div></div>
-    ${byGrande}` }),
+/* 1 — PORTADA: marca, título, subtítulo, quién es y el arroba, todo junto */
+{ foto:true, portada:true, html:`
+  <div class="by-grande reveal">
+    <div class="evento">${CHARLA.evento}</div>
+    <div class="fila"><span class="by">By</span><span class="pastilla">${LOGO}</span></div>
+  </div>
 
-/* 2 — QUIÉN HABLA */
-slide({ foto:true,
-  kicker:`Quién les habla`,
-  titulo:`<h1 style="max-width:9ch">${CHARLA.orador}</h1>`,
-  cuerpo:`
-    <div class="credenciales reveal">
-      ${CHARLA.credenciales.map((c,i) => `<div class="credencial${i>1?' suave':''}">${c}</div>`).join('')}
-    </div>` }),
+  <h1 class="reveal">${CHARLA.titulo}</h1>
+  ${CHARLA.subtitulo ? `<p class="portada-sub reveal">${CHARLA.subtitulo}</p>` : ''}
+
+  <div class="portada-autor reveal">
+    <div class="portada-nombre">${CHARLA.orador}</div>
+    <div class="portada-creds">${CHARLA.credenciales.map((c,i) => i<2 ? `<b>${c}</b>` : c).join(' · ')}</div>
+    ${CHARLA.arroba ? `<div class="arroba">${CHARLA.arroba}</div>` : ''}
+  </div>` },
 
 /* 3 — LA PREGUNTA */
 slide({
@@ -434,7 +472,12 @@ slide({
 slide({ foto:true,
   kicker:`Para cerrar`,
   titulo:`<div class="frase">La IA no te va a reemplazar.<br><em>Te va a devolver el tiempo que hoy regalás.</em></div>`,
-  cuerpo: byGrande }),
+  cuerpo:`
+    <div class="portada-autor reveal">
+      <div class="portada-nombre">${CHARLA.orador}</div>
+      ${CHARLA.arroba ? `<div class="arroba">${CHARLA.arroba}</div>` : ''}
+    </div>
+    ${byGrande}` }),
 ];
 
 /* ===========================================================
