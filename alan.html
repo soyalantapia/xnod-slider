@@ -46,11 +46,11 @@ body.mouse-visible{ cursor:default; }
 .marca-fondo{
   position:fixed; z-index:2; pointer-events:none;
   top:50%; left:-12vw; transform:translateY(-50%);
-  width:clamp(340px,58vw,1000px); opacity:.055;
+  width:clamp(380px,64vw,1120px); opacity:.13;
   animation:respira 14s ease-in-out infinite;
 }
 .marca-fondo svg{ width:100%; height:auto; display:block; }
-@keyframes respira{ 0%,100%{opacity:.05} 50%{opacity:.085} }
+@keyframes respira{ 0%,100%{opacity:.115} 50%{opacity:.175} }
 
 /* Velo del lado del texto, para que nada le gane a lo que hay que leer */
 .filmina::before{
@@ -108,39 +108,20 @@ h1{
 }
 
 /* ---- Quién es ----
-   Con jerarquía: el nombre manda, los dos cargos de peso van uno por
-   línea con la empresa destacada, y lo demás baja a etiquetas. */
-.autor{
-  display:flex; flex-direction:column; gap:clamp(.18rem,.7vh,.45rem);
-  border-left:3px solid var(--violeta-bright);
-  padding-left:clamp(.7rem,1.6vw,1.5rem);
+   En dos columnas separadas por una línea: a la izquierda quién es y
+   dónde encontrarlo, a la derecha qué hace. Ocupa menos alto que una
+   lista apilada y se lee de un vistazo. */
+.autor{ display:flex; align-items:stretch; gap:clamp(.85rem,2.1vw,1.9rem); }
+
+.autor-izq{
+  display:flex; flex-direction:column; justify-content:center;
+  align-items:flex-start; gap:clamp(.3rem,1.1vh,.7rem);
+  flex:0 0 auto;
 }
 .autor-nombre{
   font-family:var(--font-display); font-weight:800;
   font-size:clamp(1.05rem,2.5vw,2.9rem); line-height:1;
-  text-transform:uppercase; letter-spacing:-.025em;
-  margin-bottom:clamp(.1rem,.45vh,.3rem);
-}
-.autor-rol{
-  font-family:var(--font-display); font-weight:500;
-  font-size:clamp(.7rem,1.28vw,1.45rem); line-height:1.3;
-  color:var(--blanco-70);
-}
-.autor-rol b{
-  font-weight:800; color:var(--blanco);
-  text-transform:uppercase; letter-spacing:.03em;
-}
-.autor-fila{
-  display:flex; flex-wrap:wrap; align-items:center;
-  gap:clamp(.3rem,.8vw,.7rem);
-  margin-top:clamp(.25rem,.9vh,.6rem);
-}
-.etiqueta{
-  font-family:var(--font-display); font-weight:700;
-  font-size:clamp(.58rem,1vw,1.05rem); letter-spacing:.16em; text-transform:uppercase;
-  color:var(--blanco-70);
-  padding:.3em .85em; border-radius:999px;
-  border:1px solid var(--blanco-18);
+  text-transform:uppercase; letter-spacing:-.025em; white-space:nowrap;
 }
 .arroba{
   display:inline-flex; align-items:center;
@@ -148,6 +129,28 @@ h1{
   font-size:clamp(.66rem,1.15vw,1.25rem); letter-spacing:.06em; color:var(--blanco);
   padding:.3em .95em; border-radius:999px;
   background:rgba(123,77,255,.5); border:1px solid rgba(170,140,255,.8);
+}
+
+/* La línea que parte las dos columnas: se desvanece en las puntas */
+.autor-linea{
+  width:2px; flex:0 0 auto; border-radius:2px;
+  background:linear-gradient(to bottom, transparent, var(--violeta-bright) 10%, var(--violeta-bright) 90%, transparent);
+}
+
+.autor-der{
+  display:flex; flex-direction:column; justify-content:center;
+  gap:clamp(.12rem,.5vh,.35rem); min-width:0;
+}
+.autor-rol{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.7rem,1.28vw,1.45rem); line-height:1.3;
+  color:var(--blanco-70);
+}
+.autor-rol b{ font-weight:800; color:var(--blanco); text-transform:uppercase; letter-spacing:.03em; }
+.autor-tags{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(.58rem,1vw,1.05rem); letter-spacing:.2em; text-transform:uppercase;
+  color:var(--blanco-45); margin-top:clamp(.15rem,.6vh,.4rem);
 }
 
 /* ---- La foto, grande, a la derecha ---- */
@@ -241,11 +244,14 @@ document.getElementById('filmina').innerHTML = `
   ${CHARLA.subtitulo ? `<p class="subtitulo reveal">${esc(CHARLA.subtitulo)}</p>` : ''}
 
   <div class="autor reveal">
-    <div class="autor-nombre">${esc(CHARLA.orador)}</div>
-    ${CHARLA.roles.map(r => `<div class="autor-rol">${esc(r.que)} <b>${esc(r.donde)}</b></div>`).join('')}
-    <div class="autor-fila">
-      ${CHARLA.etiquetas.map(e => `<span class="etiqueta">${esc(e)}</span>`).join('')}
+    <div class="autor-izq">
+      <div class="autor-nombre">${esc(CHARLA.orador)}</div>
       ${CHARLA.arroba ? `<span class="arroba">${esc(CHARLA.arroba)}</span>` : ''}
+    </div>
+    <div class="autor-linea"></div>
+    <div class="autor-der">
+      ${CHARLA.roles.map(r => `<div class="autor-rol">${esc(r.que)} <b>${esc(r.donde)}</b></div>`).join('')}
+      ${CHARLA.etiquetas.length ? `<div class="autor-tags">${CHARLA.etiquetas.map(esc).join(' · ')}</div>` : ''}
     </div>
   </div>`;
 
