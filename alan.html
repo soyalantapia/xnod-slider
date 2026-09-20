@@ -102,9 +102,24 @@ h1{
   font-size:clamp(1.3rem,4.2vw,4.2rem); line-height:.98; letter-spacing:-.035em;
   text-transform:uppercase; text-wrap:balance; max-width:15ch;
 }
-.subtitulo{
-  font-size:clamp(.78rem,1.5vw,1.75rem); line-height:1.4;
-  color:var(--blanco-70); max-width:34ch;
+/* ---- El remate y las tres promesas de la charla ---- */
+.subtitulo{ display:flex; flex-direction:column; gap:clamp(.28rem,1vh,.62rem); }
+.sub-remate{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.66rem,1.15vw,1.3rem); letter-spacing:.26em; text-transform:uppercase;
+  color:var(--violeta-bright);
+}
+.sub-puntos{
+  display:flex; flex-wrap:wrap; align-items:center;
+  gap:clamp(.35rem,.9vw,.85rem);
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.76rem,1.42vw,1.6rem); line-height:1.25;
+  color:var(--blanco);
+}
+/* El punto violeta que separa una promesa de la otra */
+.sub-sep{
+  width:clamp(4px,.4vw,7px); height:clamp(4px,.4vw,7px);
+  border-radius:50%; background:var(--violeta-bright); flex:0 0 auto;
 }
 
 /* ---- Quién es ----
@@ -204,7 +219,10 @@ body.mouse-visible .hint{ opacity:1; }
    =========================================================== */
 const CHARLA = {
   titulo:    "Cómo usar realmente la inteligencia artificial en mi empresa",
-  subtitulo: "Sin humo. Por dónde empezar, qué delegarle y cómo saber si funcionó.",
+  /* El subtítulo eran tres promesas escondidas en un párrafo.
+     Ahora se muestran como lo que son. */
+  remate:  "Sin humo",
+  puntos:  ["Por dónde empezar", "Qué delegarle", "Cómo saber si funcionó"],
   evento:    "El espacio de los emprendedores",
   orador:    "Alan Tapia",
   arroba:    "@soyalantapia",
@@ -241,7 +259,12 @@ document.getElementById('filmina').innerHTML = `
     <h1>${esc(CHARLA.titulo)}</h1>
   </div>
 
-  ${CHARLA.subtitulo ? `<p class="subtitulo reveal">${esc(CHARLA.subtitulo)}</p>` : ''}
+  <div class="subtitulo reveal">
+    ${CHARLA.remate ? `<div class="sub-remate">${esc(CHARLA.remate)}</div>` : ''}
+    <div class="sub-puntos">
+      ${CHARLA.puntos.map(esc).join('<span class="sub-sep"></span>')}
+    </div>
+  </div>
 
   <div class="autor reveal">
     <div class="autor-izq">
