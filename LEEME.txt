@@ -59,31 +59,19 @@ INTERNET
 ─────────────────────────────────────────────────────────
 SEGUNDA PÁGINA: alan.html
 ─────────────────────────────────────────────────────────
-Presentación de la charla de Alan Tapia, "Cómo usar realmente la
-inteligencia artificial en mi empresa". 9 slides.
+UNA SOLA FILMINA para la charla de Alan Tapia. No pasa a otra:
+es una pantalla fija con el fondo animado.
 
-La PRIMERA lleva todo junto: "El espacio de los emprendedores",
-el by Xnod grande, el título, el subtítulo, quién es Alan
-(Fundador de Xnod · CEO y Fundador de Deenex · Speaker · Advisor)
-y el @soyalantapia. Todo en una sola pantalla, con la foto grande
-a la derecha. El arroba también aparece en el cierre.
+Tiene todo junto: "El espacio de los emprendedores", el by Xnod
+grande, el título, el subtítulo, quién es Alan (Fundador de Xnod ·
+CEO y Fundador de Deenex · Speaker · Advisor), el @soyalantapia,
+y la foto grande a la derecha.
 
-GIRA SOLA, en loop (12 segundos por slide). La barra de abajo muestra
-cuánto falta para la próxima.
-  → / clic     adelantar
-  ←            volver
-  Espacio      pausar / reanudar
-  Inicio / Fin primera / última
-  F            pantalla completa
-Abajo a la derecha ves en qué slide estás (3 / 9).
-Para cambiar el ritmo o pasarlas a mano: SEGUNDOS_POR_SLIDE arriba de
-todo en alan.html (0 = sólo a mano).
+  F   pantalla completa. Nada más.
 
-El kicker, el título y el texto están anclados en bandas de alto fijo,
-así que al pasar de slide NO se mueven de lugar: cambia el contenido,
-no la posición.
+Todo el texto está en el objeto CHARLA, arriba de todo del archivo.
 
-Foto grande a la derecha en portada, bio y cierre.
-El contenido de las slides 2 a 8 es un BORRADOR: está escrito para
-que se sostenga solo, pero es la charla de Alan — cambiala hasta que
-suene a él. Todo el texto está en el array SLIDES de alan.html.
+Si alguna vez querés la versión larga (eran 9 slides con el
+contenido de la charla), está en el historial de git:
+  git log --oneline -- alan.html
+  git show f0faed3:alan.html > alan-larga.html
