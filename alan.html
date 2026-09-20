@@ -109,26 +109,6 @@ h1{
   font-size:clamp(1.25rem,4vw,4.4rem); line-height:.98; letter-spacing:-.035em;
   text-transform:uppercase; max-width:25ch;
 }
-/* ---- El remate y las tres promesas de la charla ---- */
-.subtitulo{ display:flex; flex-direction:column; gap:clamp(.28rem,1vh,.62rem); }
-.sub-remate{
-  font-family:var(--font-display); font-weight:800;
-  font-size:clamp(.66rem,1.15vw,1.3rem); letter-spacing:.26em; text-transform:uppercase;
-  color:var(--violeta-bright);
-}
-.sub-puntos{
-  display:flex; flex-wrap:wrap; align-items:center;
-  gap:clamp(.35rem,.9vw,.85rem);
-  font-family:var(--font-display); font-weight:500;
-  font-size:clamp(.76rem,1.42vw,1.6rem); line-height:1.25;
-  color:var(--blanco);
-}
-/* El punto violeta que separa una promesa de la otra */
-.sub-sep{
-  width:clamp(4px,.4vw,7px); height:clamp(4px,.4vw,7px);
-  border-radius:50%; background:var(--violeta-bright); flex:0 0 auto;
-}
-
 /* ---- Quién es ----
    En dos columnas separadas por una línea: a la izquierda quién es y
    dónde encontrarlo, a la derecha qué hace. Ocupa menos alto que una
@@ -227,10 +207,6 @@ const CHARLA = {
     "inteligencia artificial",
     "en mi empresa",
   ],
-  /* El subtítulo eran tres promesas escondidas en un párrafo.
-     Ahora se muestran como lo que son. */
-  remate:  "Sin humo",
-  puntos:  ["Por dónde empezar", "Qué delegarle", "Cómo saber si funcionó"],
   evento:    "El espacio de los emprendedores",
   orador:    "Alan Tapia",
   arroba:    "@soyalantapia",
@@ -265,13 +241,6 @@ document.getElementById('filmina').innerHTML = `
 
   <div class="reveal">
     <h1>${CHARLA.titulo.map(esc).join("<br>")}</h1>
-  </div>
-
-  <div class="subtitulo reveal">
-    ${CHARLA.remate ? `<div class="sub-remate">${esc(CHARLA.remate)}</div>` : ''}
-    <div class="sub-puntos">
-      ${CHARLA.puntos.map(esc).join('<span class="sub-sep"></span>')}
-    </div>
   </div>
 
   <div class="autor reveal">
