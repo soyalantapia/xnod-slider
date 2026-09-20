@@ -107,6 +107,19 @@ centrada: son dos personas de igual peso.
 Las dos fotos ya están cargadas.
 
 ─────────────────────────────────────────────────────────
+CUARTA PÁGINA: cripto.html
+─────────────────────────────────────────────────────────
+Igual que panel.html pero para la otra charla:
+
+  Título:  Cripto & Tecnología
+  Abajo:   Alan Tapia e Iñaki Apezteguía
+
+Sin la línea de "fundadores de Xnod": quedan sólo los nombres. Como
+sobraba aire, el título y las caras van más grandes que en el panel.
+
+  F   pantalla completa. Nada más.
+
+─────────────────────────────────────────────────────────
 EL LOGO
 ─────────────────────────────────────────────────────────
 Ya está el archivo real: logo.png, en la raíz. Las tres páginas lo

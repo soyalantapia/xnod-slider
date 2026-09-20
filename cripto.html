@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel — Cripto &amp; Tecnología</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=supreme@400,500,700&display=swap">
+<style>
+/* ===========================================
+   UNA FILMINA PARA EL PANEL.
+   Dos personas de igual peso, así que a diferencia de la de Alan
+   (texto izquierda / foto derecha) acá el eje es el centro.
+   =========================================== */
+:root{
+  --violeta:#4B1FD8; --violeta-bright:#7B4DFF; --violeta-deep:#1B0552;
+  --blanco:#FFFFFF; --blanco-70:rgba(255,255,255,.70); --blanco-45:rgba(255,255,255,.45);
+  --blanco-18:rgba(255,255,255,.18);
+
+  --font-display:'Cabinet Grotesk','Avenir Next','Helvetica Neue',Arial,sans-serif;
+  --font-body:'Supreme','Avenir Next','Helvetica Neue',Arial,sans-serif;
+
+  --pad:clamp(1.2rem,4vw,4rem);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.2s !important; } }
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; overflow:hidden; }
+body{ font-family:var(--font-body); color:var(--blanco); background:var(--violeta-deep); -webkit-font-smoothing:antialiased; cursor:none; }
+body.mouse-visible{ cursor:default; }
+
+/* ---- FONDO ---- */
+.fondo{
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(120% 90% at 78% 8%,  rgba(123,77,255,.55) 0%, transparent 55%),
+    radial-gradient(100% 80% at 12% 92%, rgba(75,31,216,.65) 0%, transparent 58%),
+    linear-gradient(160deg,#4B1FD8 0%,#33108F 50%,#200767 100%);
+}
+.fondo::after{ content:''; position:absolute; inset:0; background:radial-gradient(120% 100% at 50% 50%, transparent 42%, rgba(22,3,70,.64) 100%); }
+#nodos{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+/* El logo gigante: acá va centrado, porque el contenido también lo está */
+.marca-fondo{
+  position:fixed; z-index:2; pointer-events:none;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  width:clamp(380px,66vh,820px); opacity:.13;
+  animation:respira 14s ease-in-out infinite;
+}
+.marca-fondo img{ width:100%; height:auto; display:block; }
+/* La marca es violeta + gris oscuro: sobre el fondo violeta la X se
+   perdería, así que se la lleva a blanco puro. */
+.marca-fondo img{ filter:brightness(0) invert(1); }
+@keyframes respira{ 0%,100%{opacity:.11} 50%{opacity:.17} }
+
+/* Velo parejo: como el texto está centrado, no sirve el degradé lateral */
+.filmina::before{
+  content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(75% 65% at 50% 50%, rgba(24,4,70,.62) 0%, rgba(24,4,70,.15) 70%, transparent 100%);
+}
+
+/* ---- LA FILMINA ---- */
+.filmina{
+  position:fixed; inset:0; z-index:10;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  gap:clamp(.7rem,2.4vh,2rem);
+  padding:var(--pad);
+}
+
+.reveal{ opacity:0; transform:translateY(26px); animation:entra .8s var(--ease) forwards; }
+.reveal:nth-child(1){ animation-delay:.12s }
+.reveal:nth-child(2){ animation-delay:.26s }
+.reveal:nth-child(3){ animation-delay:.40s }
+.reveal:nth-child(4){ animation-delay:.54s }
+@keyframes entra{ to{ opacity:1; transform:translateY(0); } }
+
+/* ---- Marca: el crédito "by XNOD" ---- */
+.by-grande{ display:flex; flex-direction:column; align-items:center; gap:clamp(.35rem,1.1vh,.8rem); }
+.by-grande .fila{ display:flex; align-items:center; gap:clamp(.5rem,1.3vw,1.1rem); }
+.by-grande .by{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(.72rem,1.7vw,2rem); letter-spacing:.24em; text-transform:uppercase; color:var(--blanco-70);
+}
+.by-grande .pastilla{
+  background:var(--blanco); border-radius:999px;
+  padding:clamp(.35rem,.9vh,.8rem) clamp(.7rem,1.7vw,1.6rem);
+  display:flex; align-items:center;
+  box-shadow:0 10px 36px rgba(0,0,0,.3);
+}
+.by-grande .pastilla img{ height:clamp(22px,4.4vh,56px); width:auto; display:block; }
+
+/* ---- Título ---- */
+h1{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1.4rem,5.2vw,5.8rem); line-height:1; letter-spacing:-.035em;
+  text-transform:uppercase; max-width:26ch;
+}
+
+/* ---- Los dos del panel ---- */
+.gente{
+  display:flex; align-items:flex-start; justify-content:center;
+  gap:clamp(1.2rem,5vw,5.5rem);
+  margin-top:clamp(.2rem,1vh,.8rem);
+}
+.persona{ display:flex; flex-direction:column; align-items:center; gap:clamp(.4rem,1.3vh,.9rem); }
+.persona-foto{
+  width:clamp(140px,38vh,440px); height:clamp(140px,38vh,440px);
+  border-radius:50%; overflow:hidden;
+  border:4px solid var(--blanco);
+  box-shadow:0 0 0 clamp(7px,1.3vh,16px) rgba(123,77,255,.32), 0 30px 80px rgba(0,0,0,.5);
+  background:linear-gradient(150deg,var(--violeta),var(--violeta-deep));
+  display:grid; place-items:center;
+}
+.persona-foto img{ width:100%; height:100%; object-fit:cover; display:block; }
+.persona-foto .iniciales{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(1.6rem,6vh,4rem); letter-spacing:-.02em;
+}
+.persona-nombre{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.85rem,1.95vw,2.3rem); line-height:1.05;
+  text-transform:uppercase; letter-spacing:-.02em;
+  max-width:13ch;
+}
+.persona-arroba{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(.6rem,1.05vw,1.15rem); letter-spacing:.06em; color:var(--blanco);
+  padding:.28em .9em; border-radius:999px;
+  background:rgba(123,77,255,.5); border:1px solid rgba(170,140,255,.8);
+}
+
+.hint{
+  position:fixed; bottom:clamp(.9rem,2.6vh,2rem); left:clamp(1rem,3.2vw,3.2rem); z-index:50;
+  font-size:clamp(.62rem,1vw,1.05rem); letter-spacing:.1em; color:var(--blanco-45);
+  opacity:0; transition:opacity .4s;
+}
+body.mouse-visible .hint{ opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="fondo"></div>
+<canvas id="nodos"></canvas>
+
+<div class="marca-fondo" aria-hidden="true">
+  <img src="logo-marca.png" alt="">
+</div>
+
+<main class="filmina" id="filmina"></main>
+<div class="hint">F para pantalla completa</div>
+
+<script>
+/* ===========================================================
+   ⚙️  CONFIGURACIÓN — es lo único que hay que tocar
+   =========================================================== */
+const PANEL = {
+  titulo: [
+    "Cripto & Tecnología",
+  ],
+  gente: [
+    { nombre:"Alan Tapia",        arroba:"@soyalantapia", foto:"speakers/01-alan-tapia.jpg" },
+    { nombre:"Iñaki Apezteguía",  arroba:"",              foto:"speakers/12-inaki-apezteguia.jpg" },
+  ],
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iniciales = n => n.trim().split(/\s+/).slice(0,2).map(p => p[0] || '').join('').toUpperCase();
+
+document.getElementById('filmina').innerHTML = `
+  <div class="by-grande reveal">
+    <div class="fila">
+      <span class="by">By</span>
+      <span class="pastilla"><img src="logo.png" alt="XNOD"></span>
+    </div>
+  </div>
+
+  <h1 class="reveal">${PANEL.titulo.map(esc).join('<br>')}</h1>
+
+  <div class="gente reveal">
+    ${PANEL.gente.map(p => `
+      <div class="persona">
+        <div class="persona-foto" data-ini="${esc(iniciales(p.nombre))}">
+          <img class="js-foto" src="${esc(p.foto)}" alt="${esc(p.nombre)}">
+        </div>
+        <div class="persona-nombre">${esc(p.nombre)}</div>
+        ${p.arroba ? `<span class="persona-arroba">${esc(p.arroba)}</span>` : ''}
+      </div>`).join('')}
+  </div>
+`;
+
+/* Si falta una foto, se muestran las iniciales: nunca se rompe el diseño */
+document.querySelectorAll('img.js-foto').forEach(img => {
+  const caer = () => { const c = img.parentNode; if (c) c.innerHTML = `<span class="iniciales">${c.dataset.ini}</span>`; };
+  if (img.complete && img.naturalWidth === 0) caer();
+  else img.addEventListener('error', caer, { once:true });
+});
+
+/* Pantalla completa y el puntero que se esconde solo */
+addEventListener('keydown', e => {
+  if (e.key === 'f' || e.key === 'F')
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+});
+let tmr;
+addEventListener('mousemove', () => {
+  document.body.classList.add('mouse-visible');
+  clearTimeout(tmr);
+  tmr = setTimeout(() => document.body.classList.remove('mouse-visible'), 2000);
+});
+
+/* ===========================================================
+   FONDO: RED DE NODOS
+   =========================================================== */
+(function redDeNodos(){
+  const cv = document.getElementById('nodos'), ctx = cv.getContext('2d');
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,dpr,puntos,viajes;
+
+  const halo = (r,g,b) => {
+    const c=document.createElement('canvas'), R=64; c.width=c.height=R*2;
+    const cx=c.getContext('2d'), gr=cx.createRadialGradient(R,R,0,R,R,R);
+    gr.addColorStop(0,`rgba(${r},${g},${b},1)`); gr.addColorStop(.12,`rgba(${r},${g},${b},.75)`);
+    gr.addColorStop(.32,`rgba(${r},${g},${b},.24)`); gr.addColorStop(.62,`rgba(${r},${g},${b},.06)`);
+    gr.addColorStop(1,`rgba(${r},${g},${b},0)`);
+    cx.fillStyle=gr; cx.fillRect(0,0,R*2,R*2); return c;
+  };
+  const hB = halo(255,255,255), hV = halo(170,140,255);
+
+  const medir = () => {
+    dpr = Math.min(devicePixelRatio||1,2);
+    w = cv.width = innerWidth*dpr; h = cv.height = innerHeight*dpr;
+    cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+    const n = Math.round(Math.min(96,(innerWidth*innerHeight)/16000));
+    puntos = Array.from({length:n}, () => {
+      const g = Math.random()<.22;
+      return { x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-.5)*.52*dpr, vy:(Math.random()-.5)*.52*dpr,
+        r:(g?Math.random()*3.2+3:Math.random()*2+1.4)*dpr,
+        violeta:Math.random()<.34, grande:g,
+        fase:Math.random()*Math.PI*2, vel:.9+Math.random()*1.4 };
+    });
+    viajes = [];
+  };
+  const ALC=188, MAXV=14;
+  const nuevo = max => { for(let t=0;t<14;t++){ const a=(Math.random()*puntos.length)|0,b=(Math.random()*puntos.length)|0;
+    if(a===b) continue; if((puntos[a].x-puntos[b].x)**2+(puntos[a].y-puntos[b].y)**2<max) return {a,b,t:0,vel:.005+Math.random()*.007}; } return null; };
+
+  const dibujar = ms => {
+    const t=ms/1000, max=ALC*ALC*dpr*dpr;
+    ctx.clearRect(0,0,w,h); ctx.globalCompositeOperation='source-over';
+    for(let i=0;i<puntos.length;i++){
+      const p=puntos[i];
+      if(!quieto){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1; }
+      for(let j=i+1;j<puntos.length;j++){
+        const q=puntos[j], d=(p.x-q.x)**2+(p.y-q.y)**2;
+        if(d<max){ const c=1-d/max;
+          ctx.strokeStyle=(p.violeta&&q.violeta)?`rgba(180,150,255,${c*.40})`:`rgba(255,255,255,${c*.28})`;
+          ctx.lineWidth=dpr*(.7+c*.9); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); }
+      }
+    }
+    if(!quieto){
+      while(viajes.length<MAXV){ const v=nuevo(max); if(!v) break; viajes.push(v); }
+      ctx.globalCompositeOperation='lighter';
+      for(let k=viajes.length-1;k>=0;k--){
+        const v=viajes[k]; v.t+=v.vel; const a=puntos[v.a], b=puntos[v.b];
+        if(v.t>=1||(a.x-b.x)**2+(a.y-b.y)**2>max){ viajes.splice(k,1); continue; }
+        const x=a.x+(b.x-a.x)*v.t, y=a.y+(b.y-a.y)*v.t, f=Math.sin(v.t*Math.PI), rad=12*dpr*f;
+        ctx.globalAlpha=f*.9; ctx.drawImage(hB,x-rad,y-rad,rad*2,rad*2); ctx.globalAlpha=1;
+      }
+    }
+    ctx.globalCompositeOperation='lighter';
+    for(const p of puntos){
+      const late=quieto?1:1+Math.sin(t*p.vel+p.fase)*.38, ha=p.r*(p.grande?7:5.2)*late;
+      ctx.globalAlpha=(p.grande?.8:.58)*(quieto?1:.72+Math.sin(t*p.vel+p.fase)*.28);
+      ctx.drawImage(p.violeta?hV:hB, p.x-ha, p.y-ha, ha*2, ha*2);
+      ctx.globalAlpha=1; ctx.fillStyle=p.violeta?'rgba(215,200,255,.95)':'rgba(255,255,255,.95)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*late*.55,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+    requestAnimationFrame(dibujar);
+  };
+  medir(); addEventListener('resize', medir); requestAnimationFrame(dibujar);
+})();
+</script>
+</body>
+</html>
