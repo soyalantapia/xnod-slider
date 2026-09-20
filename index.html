@@ -42,6 +42,10 @@
 
   /* Alto reservado para la barra de speakers de abajo */
 
+  /* Alto de la barra de disertantes: el JS lo mide y lo publica acá */
+  --rail-h: clamp(120px, 20vh, 220px);
+  --foto-rail: clamp(40px, 8.4vh, 88px);
+
   --ease: cubic-bezier(.16,1,.3,1);
 }
 
@@ -128,9 +132,9 @@ body.mouse-visible{ cursor:default; }
 /* ===========================================
    4. CHROME FIJO — logo + bajada, arriba a la derecha
    =========================================== */
-/* Va adentro de .lateral, que es el que está fijo: si éste también fuera
-   fixed, el índice de abajo se le montaría encima. */
 .marca{
+  position:fixed; z-index:40;
+  top:clamp(1rem,3.2vh,2.6rem); right:clamp(1rem,3.4vw,3.4rem);
   display:flex; flex-direction:column; align-items:flex-end;
   gap:clamp(.5rem,1.4vh,1rem);
   text-align:right;
@@ -171,7 +175,7 @@ body.mouse-visible{ cursor:default; }
 /* ===========================================
    5. ÁREA ROTATIVA (las "slides" que cambian)
    =========================================== */
-.escenario{ position:fixed; inset:0; z-index:10; }
+.escenario{ position:fixed; inset:0 0 var(--rail-h) 0; z-index:10; }
 /* Velo sólo del lado del texto: las pelotitas siguen brillando en el resto
    de la pantalla, pero nunca le ganan a lo que hay que leer. */
 .escenario::before{
@@ -268,7 +272,18 @@ body.mouse-visible{ cursor:default; }
 /* ===========================================
    8. SLIDE: FICHA DE DISERTANTE (spotlight)
    =========================================== */
-.ficha{ display:flex; align-items:center; width:100%; }
+.ficha{ display:flex; align-items:center; gap:clamp(1rem,3.4vw,3.4rem); width:100%; }
+.ficha-foto{
+  flex:0 0 auto;
+  width:clamp(128px,25vh,300px); height:clamp(128px,25vh,300px);
+  border-radius:50%; overflow:hidden;
+  border:3px solid var(--blanco);
+  box-shadow:0 0 0 clamp(6px,1.1vh,14px) rgba(123,77,255,.30), 0 24px 60px rgba(0,0,0,.45);
+  background:linear-gradient(150deg,var(--violeta),var(--violeta-deep));
+  display:grid; place-items:center;
+}
+.ficha-foto img{ width:100%; height:100%; max-height:none; object-fit:cover; display:block; }
+.ficha-foto .iniciales{ font-family:var(--font-display); font-weight:800; font-size:clamp(1.8rem,5.2vh,4rem); letter-spacing:-.02em; }
 .ficha-texto{ min-width:0; display:flex; flex-direction:column; gap:clamp(.25rem,1vh,.8rem); }
 .ficha-nombre{
   font-family:var(--font-display); font-weight:800;
@@ -304,51 +319,63 @@ body.mouse-visible{ cursor:default; }
 }
 
 /* ===========================================
-   10. ÍNDICE DE DISERTANTES (columna derecha)
-   Sin fotos: no llegamos a tenerlas. Sólo los nombres, en dos columnas.
+   10. BARRA DE DISERTANTES (abajo, siempre visible)
    =========================================== */
-.lateral{
-  position:fixed; z-index:40;
-  top:clamp(1rem,3.2vh,2.6rem);
-  right:clamp(1rem,3.4vw,3.4rem);
-  display:flex; flex-direction:column; align-items:flex-end;
-  gap:clamp(1rem,3.4vh,2.6rem);
-  text-align:right; max-width:42vw;
+.rail{
+  position:fixed; left:0; right:0; bottom:0; z-index:30;
+  /* La altura la define el contenido (puede ir a dos filas) y el JS la
+     publica en --rail-h para que el escenario de arriba se corra lo justo. */
+  min-height:clamp(96px,16vh,180px);
+  display:flex; flex-direction:column; justify-content:center;
+  gap:clamp(.3rem,.9vh,.7rem);
+  padding:clamp(.45rem,1.3vh,1rem) clamp(1rem,3vw,3rem);
+  background:linear-gradient(to top, rgba(10,2,32,.92) 0%, rgba(10,2,32,.72) 55%, transparent 100%);
+  border-top:1px solid var(--blanco-08);
 }
-.indice-titulo{
+.rail-titulo{
   font-family:var(--font-display); font-weight:700;
   font-size:var(--small-size); letter-spacing:.3em; text-transform:uppercase;
-  color:var(--blanco-45);
-  padding-bottom:clamp(.3rem,.8vh,.6rem);
-  margin-bottom:clamp(.35rem,1vh,.75rem);
-  border-bottom:1px solid var(--blanco-18);
+  color:var(--blanco-45); text-align:center;
 }
-/* Dos columnas, y se llenan de arriba hacia abajo (no en zigzag) */
-.indice-lista{
-  list-style:none;
-  display:grid;
-  grid-auto-flow:column;
-  grid-template-rows:repeat(var(--filas,8), auto);
-  gap:clamp(.15rem,.55vh,.42rem) clamp(.9rem,2.2vw,2.2rem);
+.rail-lista{
+  display:flex; justify-content:center; align-items:flex-start;
+  gap:clamp(.55rem,2.2vw,2.4rem);
+  row-gap:clamp(.45rem,1.3vh,1rem);
+  flex-wrap:wrap; min-width:0;
 }
-.indice-item{
-  font-family:var(--font-display); font-weight:500;
-  font-size:clamp(.62rem,1.2vw,1.42rem);
-  letter-spacing:.08em; text-transform:uppercase;
-  color:var(--blanco-70); white-space:nowrap;
-  cursor:pointer;
-  transition:color .35s var(--ease), transform .35s var(--ease);
+.rail-item{
+  display:flex; flex-direction:column; align-items:center; gap:clamp(.18rem,.6vh,.45rem);
+  min-width:0; flex:0 1 auto; cursor:pointer;
+  transition:transform .5s var(--ease);
 }
-/* El que está en pantalla: blanco, en negrita y con una marca violeta */
-.indice-item.on{
-  color:var(--blanco); font-weight:800;
-  transform:translateX(calc(-1 * clamp(.2rem,.5vw,.5rem)));
+.rail-foto{
+  width:var(--foto-rail); height:var(--foto-rail);
+  border-radius:50%; overflow:hidden;
+  background:linear-gradient(150deg,var(--violeta),var(--violeta-deep));
+  border:2px solid var(--blanco-45);
+  display:grid; place-items:center;
+  transition:border-color .5s var(--ease), box-shadow .5s var(--ease), filter .5s var(--ease);
+  filter:saturate(.75);
 }
-.indice-item.on::after{
-  content:''; display:inline-block; vertical-align:middle;
-  width:clamp(14px,1.6vw,26px); height:2px;
-  margin-left:.5em; background:var(--violeta-bright);
+.rail-foto img{ width:100%; height:100%; max-height:none; object-fit:cover; display:block; }
+.rail-foto .iniciales{ font-family:var(--font-display); font-weight:800; font-size:clamp(.7rem,2.1vh,1.15rem); }
+.rail-nombre{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(.52rem,.95vw,1.05rem); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--blanco-70); text-align:center; line-height:1.2;
+  /* El ancho sigue al de la foto: si el JS achica las fotos, los nombres
+     acompañan. Tres líneas como máximo, para que "Juan Pablo Zaninetti"
+     no salga cortado. */
+  max-width:calc(var(--foto-rail) * 2.6);
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
 }
+/* Destacado cuando su ficha está en pantalla */
+.rail-item.on{ transform:translateY(-6px); }
+.rail-item.on .rail-foto{
+  border-color:var(--blanco); filter:saturate(1.1);
+  box-shadow:0 0 0 4px rgba(123,77,255,.45), 0 10px 30px rgba(0,0,0,.5);
+}
+.rail-item.on .rail-nombre{ color:var(--blanco); }
 
 /* ===========================================
    11. PROGRESO + AYUDA
@@ -362,7 +389,7 @@ body.parado .progreso{ opacity:0; }   /* parado en un disertante: no hay nada av
   box-shadow:0 0 14px rgba(123,77,255,.8);
 }
 .pausa{
-  position:fixed; bottom:clamp(1rem,3vh,2.4rem); left:clamp(1rem,3vw,3rem); z-index:50;
+  position:fixed; bottom:calc(var(--rail-h) + 14px); left:clamp(1rem,3vw,3rem); z-index:50;
   font-family:var(--font-display); font-weight:700;
   font-size:var(--small-size); letter-spacing:.24em; text-transform:uppercase;
   color:var(--blanco-45);
@@ -370,7 +397,7 @@ body.parado .progreso{ opacity:0; }   /* parado en un disertante: no hay nada av
 }
 .pausa.on{ opacity:1; }
 .keyboard-hint{
-  position:fixed; bottom:clamp(1rem,3vh,2.4rem); right:clamp(1rem,3vw,3rem); z-index:50;
+  position:fixed; bottom:calc(var(--rail-h) + 14px); right:clamp(1rem,3vw,3rem); z-index:50;
   font-size:var(--small-size); letter-spacing:.1em; color:var(--blanco-45);
   opacity:0; transition:opacity .4s;
 }
@@ -387,9 +414,8 @@ body.mouse-visible .keyboard-hint{ opacity:1; }
 <!-- ============ PROGRESO ============ -->
 <div class="progreso" id="progreso"></div>
 
-<!-- ============ COLUMNA DERECHA: marca + índice de disertantes ============ -->
-<div class="lateral">
- <div class="marca">
+<!-- ============ MARCA: título del evento + crédito Xnod (arriba a la derecha) ============ -->
+<div class="marca">
   <div class="marca-titulo">El espacio de los<br>emprendedores</div>
   <div class="marca-by">
     <span class="by">By</span>
@@ -423,20 +449,19 @@ body.mouse-visible .keyboard-hint{ opacity:1; }
     </svg>
     </div>
   </div>
- </div>
-
- <!-- Índice de disertantes: se arma solo desde la lista SPEAKERS -->
- <aside class="indice" id="indice">
-   <div class="indice-titulo">Disertantes</div>
-   <ul class="indice-lista" id="indiceLista"></ul>
- </aside>
 </div>
 
 <!-- ============ ESCENARIO ROTATIVO ============ -->
 <main class="escenario" id="escenario"><!-- las slides las arma el JS --></main>
 
+<!-- ============ BARRA DE DISERTANTES ============ -->
+<footer class="rail" id="rail">
+  <div class="rail-titulo">Disertantes</div>
+  <div class="rail-lista" id="railLista"></div>
+</footer>
+
 <div class="pausa" id="pausa">⏸ Pausado</div>
-<div class="keyboard-hint">Scroll o ← → para moverte · clic en un nombre para ir a esa persona · Inicio vuelve al loop · F pantalla completa</div>
+<div class="keyboard-hint">Scroll o ← → para moverte · clic en una cara para ir a esa persona · Inicio vuelve al loop · F pantalla completa</div>
 
 <script>
 /* ===========================================================
@@ -459,23 +484,24 @@ const EVENTO = {
    Alan Tapia va primero y Nicolás Barg segundo, como se pidió; el
    resto sigue el orden del cronograma.
 
-   Sin fotos: se muestran sólo los nombres, en la columna de la derecha. */
+   `foto`: el archivo va en la carpeta speakers/ con ese mismo nombre.
+   Si todavía no está, se muestran las iniciales sobre violeta.       */
 const SPEAKERS = [
-  { nombre:"Alan Tapia",           rol:"Xnod",                        tema:"Inteligencia Artificial",                        hora:"17:25" },
-  { nombre:"Nicolás Barg",         rol:"CEO · Scher",                 tema:"Ventas que enamoran",                            hora:"10:15" },
-  { nombre:"Melisa Corrales",      rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10" },
-  { nombre:"Catalina Rapetti",     rol:"Panel",                       tema:"Lo que no cotiza en bolsa · Tu magnificencia",    hora:"11:10" },
-  { nombre:"Javier Buteler",       rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10" },
-  { nombre:"Matías Ioma",          rol:"Puni",                        tema:"",                                               hora:"12:05" },
-  { nombre:"Karina Lopuzzo",       rol:"Conducción",                  tema:"Aprendé a vender felicidad",                     hora:"13:30" },
-  { nombre:"Elizette Duarte",      rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
-  { nombre:"Sabrina Gianfelice",   rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
-  { nombre:"Estefanía Zelazek",    rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50" },
-  { nombre:"Juan Pablo Zaninetti", rol:"Xnod",                        tema:"",                                               hora:"14:45" },
-  { nombre:"Iñaki Apezteguía",     rol:"",                            tema:"Cripto & Tecnología",                            hora:"15:25" },
-  { nombre:"Nayla Tapia",          rol:"",                            tema:"Cómo tener creadores de contenido para tu marca", hora:"16:05" },
-  { nombre:"Analía Lombardero",    rol:"",                            tema:"",                                               hora:"16:20" },
-  { nombre:"Emilio Marziale",      rol:"Gerente General · Conte Más", tema:"",                                               hora:"16:50" },
+  { nombre:"Alan Tapia",           rol:"Xnod",                        tema:"Inteligencia Artificial",                        hora:"17:25", foto:"speakers/01-alan-tapia.jpg" },
+  { nombre:"Nicolás Barg",         rol:"CEO · Scher",                 tema:"Ventas que enamoran",                            hora:"10:15", foto:"speakers/02-nicolas-barg.jpg" },
+  { nombre:"Melisa Corrales",      rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10", foto:"speakers/03-melisa-corrales.jpg" },
+  { nombre:"Catalina Rapetti",     rol:"Panel",                       tema:"Lo que no cotiza en bolsa · Tu magnificencia",    hora:"11:10", foto:"speakers/04-catalina-rapetti.jpg" },
+  { nombre:"Javier Buteler",       rol:"Panel",                       tema:"Lo que no cotiza en bolsa: el costo invisible de cuidar", hora:"11:10", foto:"speakers/05-javier-buteler.jpg" },
+  { nombre:"Matías Ioma",          rol:"Puni",                        tema:"",                                               hora:"12:05", foto:"speakers/06-matias-ioma.jpg" },
+  { nombre:"Karina Lopuzzo",       rol:"Conducción",                  tema:"Aprendé a vender felicidad",                     hora:"13:30", foto:"speakers/07-karina-lopuzzo.jpg" },
+  { nombre:"Elizette Duarte",      rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50", foto:"speakers/08-elizette-duarte.jpg" },
+  { nombre:"Sabrina Gianfelice",   rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50", foto:"speakers/09-sabrina-gianfelice.jpg" },
+  { nombre:"Estefanía Zelazek",    rol:"Panel",                       tema:"Tu magnificencia",                               hora:"13:50", foto:"speakers/10-estefania-zelazek.jpg" },
+  { nombre:"Juan Pablo Zaninetti", rol:"Xnod",                        tema:"",                                               hora:"14:45", foto:"speakers/11-juan-pablo-zaninetti.jpg" },
+  { nombre:"Iñaki Apezteguía",     rol:"",                            tema:"Cripto & Tecnología",                            hora:"15:25", foto:"speakers/12-inaki-apezteguia.jpg" },
+  { nombre:"Nayla Tapia",          rol:"",                            tema:"Cómo tener creadores de contenido para tu marca", hora:"16:05", foto:"speakers/13-nayla-tapia.jpg" },
+  { nombre:"Analía Lombardero",    rol:"",                            tema:"",                                               hora:"16:20", foto:"speakers/14-analia-lombardero.jpg" },
+  { nombre:"Emilio Marziale",      rol:"Gerente General · Conte Más", tema:"",                                               hora:"16:50", foto:"speakers/15-emilio-marziale.jpg" },
 ];
 
 /* --- Ritmo del loop ------------------------------------------ */
@@ -504,21 +530,64 @@ const SEGUNDOS_POR_SLIDE = 9;
 const iniciales = n => n.trim().split(/\s+/).slice(0,2).map(p=>p[0]||'').join('').toUpperCase();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* Avatar: muestra la foto; si el archivo no existe, cae a las iniciales */
+function avatar(sp, clase){
+  const ini = esc(iniciales(sp.nombre));
+  if (!sp.foto) return `<div class="${clase}"><span class="iniciales">${ini}</span></div>`;
+  return `<div class="${clase}" data-ini="${ini}"><img class="js-foto" src="${esc(sp.foto)}" alt="${esc(sp.nombre)}"></div>`;
+}
+
+/* Se llama después de inyectar HTML: engancha el respaldo de cada foto */
+function activarRespaldoFotos(raiz){
+  raiz.querySelectorAll('img.js-foto').forEach(img => {
+    const caer = () => { const c = img.parentNode; if (c) c.innerHTML = `<span class="iniciales">${c.dataset.ini}</span>`; };
+    if (img.complete && img.naturalWidth === 0) caer();        // ya falló antes de engancharse
+    else img.addEventListener('error', caer, { once:true });
+  });
+}
+
 /* ===========================================================
-   ÍNDICE DE DISERTANTES (columna derecha)
+   BARRA DE DISERTANTES
    =========================================================== */
-(function construirIndice(){
-  const caja  = document.getElementById('indice');
-  const lista = document.getElementById('indiceLista');
+(function construirRail(){
+  const rail  = document.getElementById('rail');
+  const lista = document.getElementById('railLista');
 
-  if (!SPEAKERS.length){ caja.style.display = 'none'; return; }
+  if (!SPEAKERS.length){
+    rail.style.display = 'none';
+    document.documentElement.style.setProperty('--rail-h','0px');
+    return;
+  }
 
-  // Dos columnas: la primera se lleva la mitad de arriba (redondeando para arriba)
-  lista.style.setProperty('--filas', Math.ceil(SPEAKERS.length / 2));
+  lista.innerHTML = SPEAKERS.map((sp,i) => `
+    <div class="rail-item" data-sp="${i}">
+      ${avatar(sp,'rail-foto')}
+      <div class="rail-nombre">${esc(sp.nombre)}</div>
+    </div>`).join('');
+  activarRespaldoFotos(lista);
 
-  lista.innerHTML = SPEAKERS.map((sp,i) =>
-    `<li class="indice-item" data-sp="${i}">${esc(sp.nombre)}</li>`
-  ).join('');
+  /* No alcanza con adivinar por cantidad: con 15 nombres largos la fila entra
+     en 1920 y se desborda en un proyector de 1366. Así que la medimos de
+     verdad; si no entra en una fila pasa a dos, que es preferible a una fila
+     con los nombres cortados a la mitad. */
+  const ajustar = () => {
+    const aplicar = t => document.documentElement.style.setProperty('--foto-rail', t + 'px');
+    const techo = innerHeight * 0.34;        // la barra no puede comerse más de un tercio
+
+    let tam = Math.min(88, Math.max(34, innerHeight * 0.084));
+    aplicar(tam);
+
+    let guardia = 40;
+    while (rail.offsetHeight > techo && tam > 34 && guardia-- > 0){
+      tam -= 3; aplicar(tam);
+    }
+    document.documentElement.style.setProperty('--rail-h', rail.offsetHeight + 'px');
+  };
+
+  ajustar();
+  addEventListener('resize', ajustar);
+  // Las tipografías cambian el ancho del texto al terminar de cargar: medimos otra vez
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
 })();
 
 /* ===========================================================
@@ -589,6 +658,7 @@ SPEAKERS.forEach((sp,i) => SLIDES.push({
   <div class="slide-content">
     <div class="kicker reveal">Disertante</div>
     <div class="ficha reveal">
+      ${avatar(sp,'ficha-foto')}
       <div class="ficha-texto">
         <div class="ficha-nombre">${esc(sp.nombre)}</div>
         ${sp.rol  ? `<div class="ficha-rol">${esc(sp.rol)}</div>`   : ''}
@@ -619,11 +689,12 @@ class Slider{
     this.escenario = document.getElementById('escenario');
     this.progreso  = document.getElementById('progreso');
     this.pausaMsg  = document.getElementById('pausa');
-    this.items     = [...document.querySelectorAll('.indice-item')];
+    this.items     = [...document.querySelectorAll('.rail-item')];
     this.i = 0; this.pausado = false; this.t0 = 0;
 
     this.escenario.innerHTML = SLIDES.map(s => `<section class="slide">${s.html}</section>`).join('');
     this.slides = [...this.escenario.querySelectorAll('.slide')];
+    activarRespaldoFotos(this.escenario);
 
     this.mostrar(0);
     this.tick();
@@ -631,7 +702,7 @@ class Slider{
     this.rueda();
     this.tactil();
     this.mouse();
-    this.clicEnIndice();
+    this.clicEnRail();
     this.volverDeSegundoPlano();
   }
 
@@ -651,7 +722,7 @@ class Slider{
     this.i = (n + this.slides.length) % this.slides.length;
     this.slides.forEach((s,k) => s.classList.toggle('activa', k === this.i));
 
-    // Resalta en la columna de la derecha al disertante que está en pantalla
+    // Resalta en la barra de abajo al disertante que está en pantalla
     const sp = SLIDES[this.i].speaker;
     this.items.forEach((it,k) => it.classList.toggle('on', k === sp));
 
@@ -733,9 +804,9 @@ class Slider{
     }, {passive:true});
   }
 
-  /* Clic en un nombre de la derecha = saltar a esa persona. Es la forma
+  /* Clic en una cara de la barra de abajo = saltar a esa persona. Es la forma
      más rápida de ponerla cuando la llaman al escenario. */
-  clicEnIndice(){
+  clicEnRail(){
     this.items.forEach((it,k) => {
       it.addEventListener('click', e => { e.stopPropagation(); this.mostrar(FIN_AMBIENTE + 1 + k); });
     });

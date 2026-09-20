@@ -1,0 +1,32 @@
+FOTOS DE LOS DISERTANTES
+========================
+
+Poné acá las fotos con EXACTAMENTE estos nombres (el orden es el del
+slider: 1 = primero, y también la tecla 1):
+
+   01-alan-tapia.jpg
+   02-nicolas-barg.jpg
+   03-melisa-corrales.jpg
+   04-catalina-rapetti.jpg
+   05-javier-buteler.jpg
+   06-matias-ioma.jpg
+   07-karina-lopuzzo.jpg
+   08-elizette-duarte.jpg
+   09-sabrina-gianfelice.jpg
+   10-estefania-zelazek.jpg
+   11-juan-pablo-zaninetti.jpg
+   12-inaki-apezteguia.jpg
+   13-nayla-tapia.jpg
+   14-analia-lombardero.jpg
+   15-emilio-marziale.jpg
+
+Si una foto es .png en vez de .jpg, cambiá la extensión también en el
+campo `foto` de la lista SPEAKERS dentro de index.html.
+
+FORMATO
+  - CUADRADA (1:1). Si no lo es, se recorta desde el centro.
+  - Mínimo 600 x 600 px. Para proyector, 1000 x 1000 va mejor.
+  - Cara centrada y con aire arriba: se muestran en círculo.
+
+Si falta alguna no se rompe nada: aparecen las iniciales de esa
+persona en blanco sobre violeta.
